@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1">
+<title>AR Duel — Shoot · Block · Reload</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+:root{
+  --void:#05050d;
+  --ink:#0c0c1a;
+  --surface:#141426;
+  --dim:#1e1e38;
+  --border:rgba(255,255,255,0.07);
+  --cyan:#3dffd4;
+  --cyan2:#00c9a8;
+  --red:#ff4040;
+  --amber:#ffd23f;
+  --grey:#6060a0;
+  --txt:#e8e8ff;
+  --muted:rgba(232,232,255,0.4);
+  --font-disp:'Bebas Neue',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--void);color:var(--txt);font-family:var(--font-mono)}
+body{display:flex;align-items:center;justify-content:center}
+
+/* scanline overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);
+}
+
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.screen.on{opacity:1;pointer-events:all}
+
+/* ── TITLE SCREEN ── */
+.title-art{
+  font-family:var(--font-disp);
+  font-size:clamp(56px,18vw,90px);
+  line-height:0.9;
+  text-align:center;
+  color:var(--txt);
+  letter-spacing:2px;
+  margin-bottom:6px;
+}
+.title-art .accent{color:var(--cyan)}
+.title-sub{
+  font-size:10px;letter-spacing:5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:40px;text-align:center;
+}
+.btn{
+  width:100%;max-width:260px;padding:14px;
+  border-radius:3px;border:1px solid var(--border);
+  background:var(--surface);color:var(--txt);
+  font-family:var(--font-mono);font-size:13px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;text-align:center;
+  transition:all .12s;margin-bottom:10px;
+}
+.btn:active{transform:scale(0.97);background:var(--dim)}
+.btn.prim{background:var(--cyan);border-color:var(--cyan);color:var(--void)}
+.btn.prim:active{background:var(--cyan2);border-color:var(--cyan2);color:var(--void)}
+.btn.ghost{background:transparent;color:var(--muted);font-size:11px;letter-spacing:3px}
+
+/* ── COUNTDOWN ── */
+#scd .cd-lbl{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+#scd .cd-num{
+  font-family:var(--font-disp);font-size:120px;line-height:1;
+  color:var(--cyan);
+}
+#scd .cd-go{font-family:var(--font-disp);font-size:60px;color:var(--amber);letter-spacing:4px}
+
+/* ── GAME SCREEN ── */
+#sg{
+  justify-content:space-between;padding:10px 12px;
+  max-width:400px;width:100%;height:100%;gap:0;
+}
+
+/* combatant card */
+.cc{
+  background:var(--ink);
+  border:0.5px solid var(--border);
+  border-radius:6px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:7px;flex-shrink:0;
+}
+.cc-top{display:flex;align-items:center;justify-content:space-between}
+.cc-name{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.baz{
+  display:none;font-size:9px;letter-spacing:2px;font-weight:600;text-transform:uppercase;
+  color:var(--amber);border:0.5px solid var(--amber);
+  padding:2px 8px;border-radius:2px;
+  background:rgba(255,210,63,.06);
+}
+.baz.show{display:inline-block}
+.hp-row,.ammo-row{display:flex;gap:4px;align-items:center}
+.hp-pip{
+  width:24px;height:24px;border-radius:3px;
+  border:0.5px solid var(--border);
+  transition:background .2s,border-color .2s;
+}
+.hp-pip.on{background:var(--cyan);border-color:var(--cyan2)}
+.ammo-pip{
+  width:12px;height:12px;border-radius:2px;
+  border:0.5px solid var(--border);
+  transition:background .2s;
+}
+.ammo-pip.on{background:rgba(61,255,212,.5);border-color:var(--cyan)}
+.ammo-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;margin-left:3px}
+
+/* ── BEAT ZONE ── */
+.bz{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:9px;
+}
+.beat-counter{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.ring-wrap{position:relative;width:76px;height:76px;display:flex;align-items:center;justify-content:center}
+.ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid var(--grey);
+  transition:transform .12s,border-color .12s;
+}
+.ring.pulse{transform:scale(1.22);border-color:var(--cyan)}
+.ring-inner{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--surface);border:0.5px solid var(--border);
+}
+.tbar-wrap{
+  width:160px;height:3px;background:var(--dim);border-radius:1px;overflow:hidden;
+}
+.tbar{height:100%;width:0;border-radius:1px;background:var(--grey);transition:background .08s}
+.tbar.perf{background:var(--amber)}
+
+/* round result */
+.rr{
+  display:flex;gap:14px;align-items:center;justify-content:center;
+  min-height:46px;
+}
+.ac{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ac .al{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.ac .ai{font-size:20px}
+.rf{
+  font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 10px;border-radius:2px;
+}
+.rf.hit{background:rgba(255,64,64,.12);color:var(--red);border:0.5px solid var(--red)}
+.rf.blk{background:rgba(61,255,212,.08);color:var(--cyan);border:0.5px solid var(--cyan)}
+.rf.baz{background:rgba(255,210,63,.1);color:var(--amber);border:0.5px solid var(--amber)}
+.rf.nn{background:transparent;color:var(--muted);border:0.5px solid var(--border)}
+
+/* ── ACTION BUTTONS ── */
+.alocked{font-size:10px;color:var(--amber);text-align:center;height:14px;letter-spacing:1px}
+.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0}
+.abtn{
+  background:var(--ink);border:0.5px solid var(--border);border-radius:6px;
+  padding:15px 4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  cursor:pointer;transition:all .1s;touch-action:manipulation;
+}
+.abtn:active{transform:scale(0.94)}
+.abtn.sel.ar{background:rgba(61,255,212,.07);border:1px solid var(--cyan)}
+.abtn.sel.as{background:rgba(255,64,64,.07);border:1px solid var(--red)}
+.abtn.sel.ab{background:rgba(100,100,200,.1);border:1px solid #8888ff}
+.abtn.dis{opacity:0.25;pointer-events:none}
+.aicon{font-size:22px}
+.albl{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.ahint{font-size:8px;color:var(--muted);opacity:.65;letter-spacing:1px}
+
+/* ── RESULT SCREEN ── */
+#sr .rt{font-family:var(--font-disp);font-size:clamp(48px,14vw,72px);letter-spacing:2px;margin-bottom:4px;text-align:center}
+#sr .rt.win{color:var(--cyan)}
+#sr .rt.lose{color:var(--red)}
+#sr .rt.draw{color:var(--amber)}
+#sr .rsub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;text-align:center}
+.srow{display:flex;gap:28px;margin-bottom:28px}
+.si{text-align:center}
+.sv{font-family:var(--font-disp);font-size:36px;color:var(--txt)}
+.sl2{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+
+/* corner decorations on game screen */
+.corner{position:absolute;width:16px;height:16px;border-color:var(--grey);border-style:solid}
+.corner.tl{top:8px;left:8px;border-width:1px 0 0 1px}
+.corner.tr{top:8px;right:8px;border-width:1px 1px 0 0}
+.corner.bl{bottom:8px;left:8px;border-width:0 0 1px 1px}
+.corner.br{bottom:8px;right:8px;border-width:0 1px 1px 0}
+
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
+.shake{animation:shake .22s ease}
+@keyframes dmgflash{0%,100%{background:var(--ink)}50%{background:rgba(255,64,64,.18)}}
+.dmg{animation:dmgflash .25s ease}
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div id="st" class="screen on">
+  <div class="title-art">AR<br><span class="accent">DUEL</span></div>
+  <div class="title-sub">Shoot · Block · Reload</div>
+  <button class="btn prim" onclick="startGame()">PLAY vs AI</button>
+  <button class="btn ghost" onclick="howToPlay()">HOW TO PLAY</button>
+</div>
+
+<!-- COUNTDOWN -->
+<div id="scd" class="screen">
+  <div class="cd-lbl">Get ready</div>
+  <div class="cd-num" id="cdnum">3</div>
+</div>
+
+<!-- GAME -->
+<div id="sg" class="screen" style="position:relative">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+
+  <!-- AI card -->
+  <div class="cc" id="ai-card">
+    <div class="cc-top">
+      <span class="cc-name">OPPONENT</span>
+      <span class="baz" id="ai-baz">⚡ BAZOOKA RDY</span>
+    </div>
+    <div class="hp-row" id="ai-hp"></div>
+    <div class="ammo-row">
+      <div id="ai-ammo" style="display:flex;gap:4px"></div>
+      <span class="ammo-lbl">AMMO</span>
+    </div>
+  </div>
+
+  <!-- Beat zone -->
+  <div class="bz">
+    <div class="beat-counter">BEAT <span id="bnum">0</span> / 28</div>
+    <div class="ring-wrap">
+      <div class="ring" id="ring"></div>
+      <div class="ring-inner"></div>
+    </div>
+    <div class="tbar-wrap"><div class="tbar" id="tbar"></div></div>
+    <div class="rr" id="rr"></div>
+  </div>
+
+  <!-- Player card -->
+  <div class="cc" id="pl-card">
+    <div class="cc-top">
+      <span class="cc-name">YOU</span>
+      <span class="baz" id="pl-baz">⚡ BAZOOKA RDY</span>
+    </div>
+    <div class="hp-row" id="pl-hp"></div>
+    <div class="ammo-row">
+      <div id="pl-ammo" style="display:flex;gap:4px"></div>
+      <span class="ammo-lbl">AMMO</span>
+    </div>
+  </div>
+
+  <div class="alocked" id="alocked"></div>
+
+  <!-- Action grid -->
+  <div class="agrid">
+    <div class="abtn ar" id="a-reload" onclick="act('reload')">
+      <div class="aicon">🔄</div>
+      <div class="albl">RELOAD</div>
+      <div class="ahint">+1 AMMO</div>
+    </div>
+    <div class="abtn as dis" id="a-shoot" onclick="act('shoot')">
+      <div class="aicon">🔫</div>
+      <div class="albl">SHOOT</div>
+      <div class="ahint">NEEDS AMMO</div>
+    </div>
+    <div class="abtn ab" id="a-block" onclick="act('block')">
+      <div class="aicon">🛡️</div>
+      <div class="albl">BLOCK</div>
+      <div class="ahint">REFLECT!</div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="sr" class="screen">
+  <div class="rt" id="rtitle">VICTORY</div>
+  <div class="rsub" id="rsub">OPPONENT ELIMINATED</div>
+  <div class="srow">
+    <div class="si"><div class="sv" id="stat-w">0</div><div class="sl2">WINS</div></div>
+    <div class="si"><div class="sv" id="stat-l">0</div><div class="sl2">LOSSES</div></div>
+  </div>
+  <button class="btn prim" onclick="startGame()">PLAY AGAIN</button>
+  <button class="btn ghost" onclick="show('st')">MENU</button>
+</div>
+
+<script>
+// ── AUDIO ENGINE ──
+let actx=null;
+function au(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)()}
+function tone(f,d,t='sine',v=0.25,ramp=true){
+  au();
+  const o=actx.createOscillator(),g=actx.createGain();
+  o.type=t;o.frequency.value=f;
+  o.connect(g);g.connect(actx.destination);
+  g.gain.setValueAtTime(v,actx.currentTime);
+  if(ramp)g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+d);
+  o.start();o.stop(actx.currentTime+d);
+}
+const sfx={
+  beat:()=>{tone(180,.07,'triangle',.18)},
+  hit:()=>{tone(120,.12,'sawtooth',.3);setTimeout(()=>tone(70,.1,'square',.2),70)},
+  block:()=>{tone(520,.05,'sine',.18);setTimeout(()=>tone(440,.08,'sine',.12),60)},
+  baz:()=>{tone(60,.06,'square',.5);setTimeout(()=>tone(120,.06,'square',.4),80);setTimeout(()=>tone(240,.25,'sawtooth',.35),160)},
+  win:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.15,'sine',.3),i*110))},
+  lose:()=>{tone(180,.18,'sawtooth',.3);setTimeout(()=>tone(120,.3,'sawtooth',.25),150)},
+  perfect:()=>{tone(880,.05,'sine',.2)},
+};
+
+// ── STATE ──
+const G={
+  p:{hp:3,ammo:0,cr:0},
+  a:{hp:3,ammo:0,cr:0},
+  beat:0,maxBeats:28,beatMs:1100,
+  lastBeat:0,pAct:null,pPerf:false,locked:false,
+  wins:0,losses:0,
+  _bi:null,_ti:null
+};
+
+// ── UI UTILS ──
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+
+function pips(id,n,max,base,active){
+  const el=document.getElementById(id);el.innerHTML='';
+  for(let i=0;i<max;i++){const d=document.createElement('div');d.className=base+(i<n?' on':'');el.appendChild(d)}
+}
+
+function renderG(){
+  pips('ai-hp',G.a.hp,3,'hp-pip','');
+  pips('pl-hp',G.p.hp,3,'hp-pip','');
+  pips('ai-ammo',G.a.ammo,3,'ammo-pip','');
+  pips('pl-ammo',G.p.ammo,3,'ammo-pip','');
+  document.getElementById('bnum').textContent=G.beat;
+  document.getElementById('ai-baz').classList.toggle('show',G.a.cr>=3);
+  document.getElementById('pl-baz').classList.toggle('show',G.p.cr>=3);
+  if(!G.locked)document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
+}
+
+// ── AI BRAIN ──
+function aiAct(){
+  const a=G.a,p=G.p;
+  // Bazooka ready — always fire
+  if(a.cr>=3)return'shoot';
+  // No ammo
+  if(a.ammo===0){
+    if(p.cr===2)return'block'; // expect player bazooka
+    return'reload';
+  }
+  // Predict player bazooka
+  if(p.cr>=3&&p.ammo>=1)return'block';
+  if(p.cr===2&&Math.random()<.52)return'block';
+  // Player is empty — punish
+  if(p.ammo===0&&Math.random()<.58)return'shoot';
+  // General mix
+  const r=Math.random();
+  if(a.ammo<2)return r<.48?'reload':r<.72?'shoot':'block';
+  return r<.38?'shoot':r<.62?'reload':'block';
+}
+
+// ── RESOLVE ROUND ──
+function resolve(pa,aa,pp){
+  const p=G.p,a=G.a;
+  const pBaz=p.cr>=3&&pa==='shoot';
+  const aBaz=a.cr>=3&&aa==='shoot';
+
+  // Update consecutive reloads
+  p.cr=pa==='reload'?p.cr+1:0;
+  a.cr=aa==='reload'?a.cr+1:0;
+
+  // Apply reloads
+  if(pa==='reload')p.ammo=Math.min(3,p.ammo+(pp?2:1));
+  if(aa==='reload')a.ammo=Math.min(3,a.ammo+1);
+
+  let msg='nn';
+
+  // Player shoots
+  if(pa==='shoot'&&p.ammo>0){
+    p.ammo--;
+    const dmg=pBaz?2:1;
+    if(aa!=='block'||pBaz){
+      a.hp=Math.max(0,a.hp-dmg);
+      msg=pBaz?'baz':'hit';
+      pBaz?sfx.baz():sfx.hit();
+    } else {
+      msg='blk';sfx.block();
+    }
+  }
+
+  // AI shoots
+  if(aa==='shoot'&&a.ammo>0){
+    a.ammo--;
+    const dmg=aBaz?2:1;
+    if(pa!=='block'||aBaz){
+      p.hp=Math.max(0,p.hp-dmg);
+      if(msg==='nn')msg=aBaz?'baz':'hit';
+      sfx.hit();
+      const c=document.getElementById('pl-card');
+      c.classList.add('dmg');setTimeout(()=>c.classList.remove('dmg'),300);
+    } else {
+      // check perfect block reflect
+      if(pp){a.hp=Math.max(0,a.hp-1);sfx.perfect();}
+      if(msg==='nn')msg='blk';
+      sfx.block();
+    }
+  }
+
+  showRR(pa,aa,msg,pBaz,aBaz);
+  renderG();
+  setTimeout(checkWin,380);
+}
+
+function eIcon(a,baz){return baz?'🚀':{reload:'🔄',shoot:'🔫',block:'🛡️',miss:'❌'}[a]||'?'}
+function rfCls(m){return{hit:'hit',baz:'baz',blk:'blk',nn:'nn'}[m]||'nn'}
+function rfTxt(m){return{hit:'HIT!',baz:'BAZOOKA!',blk:'BLOCKED',nn:'—',miss:'MISSED!'}[m]||'—'}
+
+function showRR(pa,aa,msg,pBaz,aBaz){
+  document.getElementById('rr').innerHTML=`
+    <div class="ac"><span class="al">YOU</span><span class="ai">${eIcon(pa,pBaz)}</span></div>
+    <span class="rf ${rfCls(msg)}">${rfTxt(msg)}</span>
+    <div class="ac"><span class="al">OPP</span><span class="ai">${eIcon(aa,aBaz)}</span></div>`;
+  if(msg==='hit'||msg==='baz'){
+    const c=document.getElementById('ai-card');c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),260);
+  }
+}
+
+function checkWin(){
+  if(G.p.hp<=0||G.a.hp<=0||G.beat>=G.maxBeats)endMatch();
+}
+
+function endMatch(){
+  clearInterval(G._bi);clearInterval(G._ti);
+  const won=G.a.hp<=0||(G.beat>=G.maxBeats&&G.p.hp>G.a.hp);
+  const tied=G.p.hp===G.a.hp&&G.beat>=G.maxBeats;
+  if(won&&!tied)G.wins++;else G.losses++;
+  document.getElementById('stat-w').textContent=G.wins;
+  document.getElementById('stat-l').textContent=G.losses;
+  const t=document.getElementById('rtitle'),s=document.getElementById('rsub');
+  if(tied){t.textContent='DRAW';t.className='rt draw';s.textContent='BOTH SURVIVE';sfx.block();}
+  else if(won){t.textContent='VICTORY';t.className='rt win';s.textContent='OPPONENT ELIMINATED';sfx.win();}
+  else{t.textContent='ELIMINATED';t.className='rt lose';s.textContent='BETTER LUCK NEXT MATCH';sfx.lose();}
+  setTimeout(()=>show('sr'),200);
+}
+
+// ── BEAT SYSTEM ──
+function doBeat(){
+  G.beat++;
+  document.getElementById('bnum').textContent=G.beat;
+  sfx.beat();
+  const ring=document.getElementById('ring');
+  ring.classList.add('pulse');setTimeout(()=>ring.classList.remove('pulse'),160);
+
+  const pa=G.pAct||'miss';
+  const aa=aiAct();
+  const pp=G.pPerf;
+
+  G.lastBeat=Date.now();
+  G.pAct=null;G.pPerf=false;G.locked=false;
+
+  // Reset buttons
+  document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
+  document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
+  document.getElementById('alocked').textContent='';
+
+  if(pa==='miss'){
+    // Penalty for missing beat
+    if(aa==='shoot'&&G.a.ammo>0){
+      G.a.ammo--;G.p.hp=Math.max(0,G.p.hp-1);sfx.hit();
+      document.getElementById('rr').innerHTML=`<span class="rf hit">MISSED! -1</span>`;
+      const c=document.getElementById('pl-card');c.classList.add('dmg');setTimeout(()=>c.classList.remove('dmg'),300);
+    } else {
+      if(aa==='reload')G.a.ammo=Math.min(3,G.a.ammo+1);
+      document.getElementById('rr').innerHTML=`<span class="rf nn">—</span>`;
+    }
+    renderG();
+    setTimeout(checkWin,380);
+  } else {
+    resolve(pa,aa,pp);
+  }
+}
+
+function startTBar(){
+  clearInterval(G._ti);
+  G.lastBeat=Date.now();
+  G._ti=setInterval(()=>{
+    const pct=Math.min(100,(Date.now()-G.lastBeat)/G.beatMs*100);
+    const b=document.getElementById('tbar');
+    b.style.width=pct+'%';
+    b.classList.toggle('perf',pct>=75);
+  },35);
+}
+
+// ── PLAYER ACTION ──
+function act(a){
+  au(); // unlock audio context on first interaction
+  if(G.locked)return;
+  if(a==='shoot'&&G.p.ammo<=0)return;
+  G.pAct=a;G.locked=true;
+  const pct=(Date.now()-G.lastBeat)/G.beatMs;
+  G.pPerf=pct>=0.75;
+  document.querySelectorAll('.abtn').forEach(b=>{b.classList.remove('sel');b.classList.add('dis')});
+  const ids={reload:'a-reload',shoot:'a-shoot',block:'a-block'};
+  document.getElementById(ids[a]).classList.add('sel');
+  document.getElementById(ids[a]).classList.remove('dis');
+  document.getElementById('alocked').textContent=G.pPerf?'⚡ PERFECT TIMING':'LOCKED IN';
+  if(G.pPerf)sfx.perfect();
+}
+
+// ── COUNTDOWN & START ──
+function cdTick(n,cb){
+  document.getElementById('cdnum').textContent=n>0?n:'GO!';
+  document.getElementById('cdnum').className=n>0?'cd-num':'cd-go';
+  if(n<0){cb();return;}
+  setTimeout(()=>cdTick(n-1,cb),n===0?400:700);
+}
+
+function startGame(){
+  clearInterval(G._bi);clearInterval(G._ti);
+  G.p={hp:3,ammo:0,cr:0};G.a={hp:3,ammo:0,cr:0};
+  G.beat=0;G.pAct=null;G.pPerf=false;G.locked=false;
+  renderG();
+  document.getElementById('rr').innerHTML='';
+  document.getElementById('alocked').textContent='';
+  document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
+  document.getElementById('a-shoot').classList.add('dis');
+  show('scd');
+  cdTick(3,()=>{
+    show('sg');
+    startTBar();
+    G._bi=setInterval(doBeat,G.beatMs);
+  });
+}
+
+function howToPlay(){
+  alert(
+    'AR DUEL — HOW TO PLAY\n\n'+
+    'Each 1.1-sec beat, tap ONE action:\n\n'+
+    '🔄 RELOAD — gain +1 ammo (max 3)\n'+
+    '🔫 SHOOT  — spend 1 ammo, deal 1 damage\n'+
+    '🛡️ BLOCK  — deflect incoming shot\n\n'+
+    '3 HP each. First to 0 loses.\n\n'+
+    '⚡ BAZOOKA: Reload 3x in a row,\n'+
+    '   next Shoot = UNBLOCKABLE + 2 damage!\n\n'+
+    '⭐ PERFECT TIMING (last 25% of beat):\n'+
+    '   Reload → +2 ammo\n'+
+    '   Block  → reflect damage back!\n\n'+
+    '⚠️ Miss a beat = opponent acts for free!'
+  );
+}
+</script>
+</body>
+</html>

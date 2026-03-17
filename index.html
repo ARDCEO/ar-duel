@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AR Duel — The Game You Already Know</title>
+<meta name="description" content="The schoolyard hand game, gone digital. Reload. Shoot. Block. Pure skill. 30-second matches. Free to play.">
+<meta property="og:title" content="AR Duel — Shoot · Block · Reload">
+<meta property="og:description" content="The schoolyard hand game, perfected for mobile. Zero pay-to-win. Pure skill.">
+<meta property="og:image" content="og-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- ADSENSE: Replace with your publisher ID -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#05050d;--ink:#0c0c1a;--surface:#141426;--dim:#1e1e38;
+  --border:rgba(255,255,255,0.07);
+  --cyan:#3dffd4;--cyan2:#00c9a8;--red:#ff4040;--amber:#ffd23f;
+  --grey:#6060a0;--txt:#e8e8ff;--muted:rgba(232,232,255,0.45);
+  --font-d:'Bebas Neue',sans-serif;
+  --font-m:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--txt);font-family:var(--font-m);overflow-x:hidden}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.025) 3px,rgba(0,0,0,.025) 6px);
+}
+a{color:var(--cyan);text-decoration:none}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;
+  background:rgba(5,5,13,.88);
+  border-bottom:0.5px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.nav-logo{font-family:var(--font-d);font-size:22px;letter-spacing:2px;color:var(--txt)}
+.nav-logo span{color:var(--cyan)}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-link{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.nav-link:hover{color:var(--txt)}
+.nav-cta{
+  background:var(--cyan);color:var(--void);
+  padding:8px 18px;border-radius:2px;
+  font-family:var(--font-m);font-size:11px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background .12s;
+  text-decoration:none;display:inline-block;
+}
+.nav-cta:hover{background:var(--cyan2);color:var(--void)}
+
+/* ── AD SLOT ── */
+.ad-slot{
+  background:var(--ink);border-top:0.5px dashed var(--border);border-bottom:0.5px dashed var(--border);
+  padding:18px 24px;text-align:center;
+  color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  position:relative;z-index:1;
+}
+.ad-slot.rect{max-width:360px;margin:32px auto;border:0.5px dashed var(--border);border-radius:4px}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  text-align:center;padding:80px 24px 60px;
+  max-width:680px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;
+}
+.hero-eyebrow{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--cyan);border:0.5px solid var(--cyan);
+  padding:4px 14px;border-radius:1px;margin-bottom:24px;
+  background:rgba(61,255,212,.04);display:inline-block;
+}
+.hero h1{
+  font-family:var(--font-d);
+  font-size:clamp(56px,16vw,110px);
+  line-height:.92;letter-spacing:2px;
+  color:var(--txt);margin-bottom:20px;
+}
+.hero h1 .hl{color:var(--cyan)}
+.hero p{
+  font-size:14px;color:var(--muted);line-height:1.8;
+  max-width:420px;margin:0 auto 36px;
+}
+
+/* animated beat ring */
+.ring-demo{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid var(--grey);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 36px;
+  animation:hrpulse 1.1s ease infinite;
+}
+.ring-inner{width:42px;height:42px;border-radius:50%;background:var(--surface);border:0.5px solid var(--border)}
+@keyframes hrpulse{0%,100%{transform:scale(1);border-color:var(--grey)}50%{transform:scale(1.25);border-color:var(--cyan)}}
+
+.cta-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-play{
+  background:var(--cyan);color:var(--void);
+  padding:14px 36px;border-radius:2px;
+  font-family:var(--font-m);font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  border:none;cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background .12s;
+}
+.btn-play:hover{background:var(--cyan2);color:var(--void)}
+.btn-sec{
+  background:transparent;color:var(--muted);
+  padding:14px 24px;border-radius:2px;border:0.5px solid var(--border);
+  font-family:var(--font-m);font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:all .12s;
+}
+.btn-sec:hover{color:var(--txt);border-color:var(--grey)}
+
+/* ── SECTION ── */
+.sec{position:relative;z-index:1;padding:56px 24px;max-width:900px;margin:0 auto}
+.sec-lbl{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.sec h2{font-family:var(--font-d);font-size:clamp(32px,6vw,52px);letter-spacing:2px;color:var(--txt);margin-bottom:32px}
+
+/* 3-col grid */
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{
+  background:var(--ink);border:0.5px solid var(--border);
+  border-radius:4px;padding:22px 20px;
+}
+.card-icon{font-size:28px;margin-bottom:10px}
+.card h3{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;color:var(--txt)}
+.card p{font-size:12px;color:var(--muted);line-height:1.7}
+.card.accent{border-color:rgba(255,210,63,.3);background:rgba(255,210,63,.03)}
+.card.accent h3{color:var(--amber)}
+
+/* divider line */
+.dline{border:none;border-top:0.5px solid var(--border);margin:0;position:relative;z-index:1}
+
+/* feature list */
+.fl{list-style:none;display:flex;flex-direction:column;gap:14px;max-width:560px}
+.fl li{display:flex;gap:14px;font-size:13px;color:var(--muted);line-height:1.6}
+.fl li .fic{color:var(--cyan);font-size:12px;letter-spacing:1px;flex-shrink:0;margin-top:2px;font-weight:600}
+.fl li strong{color:var(--txt);font-weight:600}
+
+/* baz showcase */
+.baz-row{display:flex;gap:6px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.baz-row span{font-size:20px}
+.baz-arrow{font-size:14px;color:var(--muted)}
+.baz-tag{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--amber);border:0.5px solid var(--amber);padding:3px 10px;border-radius:1px;background:rgba(255,210,63,.06)}
+
+/* email */
+.email-box{
+  background:var(--ink);border:0.5px solid var(--border);
+  border-radius:4px;padding:32px;text-align:center;
+  max-width:480px;margin:0 auto;
+}
+.email-box h3{font-family:var(--font-d);font-size:28px;letter-spacing:2px;margin-bottom:6px}
+.email-box p{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.email-form{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.email-in{
+  flex:1;min-width:180px;padding:11px 14px;
+  border-radius:2px;border:0.5px solid var(--border);
+  background:var(--surface);color:var(--txt);
+  font-family:var(--font-m);font-size:12px;outline:none;
+}
+.email-in:focus{border-color:var(--cyan)}
+.email-sub{
+  padding:11px 18px;border-radius:2px;background:var(--cyan);color:var(--void);
+  font-family:var(--font-m);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background .12s;
+}
+.email-sub:hover{background:var(--cyan2)}
+#email-msg{margin-top:10px;font-size:11px;color:var(--cyan);min-height:14px;letter-spacing:1px}
+
+/* hardware teaser */
+.hw-card{
+  background:var(--ink);border:0.5px solid rgba(61,255,212,.2);
+  border-radius:4px;padding:24px 20px;
+  max-width:560px;
+}
+.hw-card .badge{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--amber);border:0.5px solid var(--amber);
+  padding:2px 8px;border-radius:1px;background:rgba(255,210,63,.05);
+  display:inline-block;margin-bottom:12px;
+}
+.hw-card h3{font-family:var(--font-d);font-size:24px;letter-spacing:2px;margin-bottom:8px;color:var(--txt)}
+.hw-card p{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* stats strip */
+.stats-strip{
+  display:flex;gap:0;justify-content:center;flex-wrap:wrap;
+  border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);
+  position:relative;z-index:1;
+}
+.stat{
+  flex:1;min-width:120px;text-align:center;padding:20px 16px;
+  border-right:0.5px solid var(--border);
+}
+.stat:last-child{border-right:none}
+.stat .sv{font-family:var(--font-d);font-size:32px;color:var(--cyan);letter-spacing:1px}
+.stat .sl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* footer */
+footer{
+  position:relative;z-index:1;
+  border-top:0.5px solid var(--border);padding:24px;
+  text-align:center;
+}
+.footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.footer-links a:hover{color:var(--txt)}
+.footer-copy{font-size:10px;color:var(--muted);letter-spacing:1px;line-height:1.6}
+
+@media(max-width:480px){
+  .nav-right .nav-link{display:none}
+  .hero h1{font-size:clamp(52px,20vw,80px)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AR <span>DUEL</span></div>
+  <div class="nav-right">
+    <a href="#how" class="nav-link">How to play</a>
+    <a href="#early" class="nav-link">Early access</a>
+    <a href="ar_duel_game.html" class="nav-cta">Play Free</a>
+  </div>
+</nav>
+
+<!-- TOP AD SLOT (Leaderboard 728x90) -->
+<div class="ad-slot">
+  <!-- Replace with AdSense: ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-XXXXX" data-ad-slot="XXXXX" -->
+  AD SLOT — 728×90 LEADERBOARD
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Free to play · Zero pay-to-win · Pure skill</div>
+  <h1>THE GAME<br>YOU ALREADY<br><span class="hl">KNOW.</span></h1>
+  <p>The schoolyard hand game — Reload, Shoot, Block — rebuilt for mobile competition. 30-second matches. Infinite skill ceiling. You already know the rules.</p>
+  <div class="ring-demo"><div class="ring-inner"></div></div>
+  <div class="cta-group">
+    <a href="ar_duel_game.html" class="btn-play">Play Free →</a>
+    <a href="#how" class="btn-sec">How it works</a>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat"><div class="sv">30s</div><div class="sl">Max match length</div></div>
+  <div class="stat"><div class="sv">0%</div><div class="sl">Random chance</div></div>
+  <div class="stat"><div class="sv">3</div><div class="sl">Reloads to bazooka</div></div>
+  <div class="stat"><div class="sv">∞</div><div class="sl">Skill ceiling</div></div>
+</div>
+
+<!-- MID AD -->
+<div class="ad-slot rect">
+  <!-- AdSense 300×250 rectangle -->
+  AD SLOT — 300×250 RECTANGLE
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="sec" id="how">
+  <div class="sec-lbl">Core mechanic</div>
+  <h2>THREE MOVES.<br>INFINITE DEPTH.</h2>
+  <div class="grid3">
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <h3>Reload</h3>
+      <p>Gain +1 ammo (max 3). Hit the beat perfectly for +2. No ammo — no offense. Choose your moment.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔫</div>
+      <h3>Shoot</h3>
+      <p>Spend 1 ammo to deal 1 damage. Read your opponent. Punish a reload. Never waste ammo on a block.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>Block</h3>
+      <p>Deflect any incoming shot. Time it perfectly on the beat — reflect 1 damage straight back.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="dline">
+
+<!-- BAZOOKA -->
+<div class="sec">
+  <div class="sec-lbl">Signature move</div>
+  <h2>⚡ THE BAZOOKA</h2>
+  <div class="card accent" style="max-width:540px">
+    <p style="font-size:13px;color:var(--txt);line-height:1.8">
+      Reload three times in a row. Your next shot becomes a <strong style="color:var(--amber)">BAZOOKA</strong> — unblockable, 2 damage, instant clip. Your opponent can see it loading. They still can't stop it.
+    </p>
+    <div class="baz-row">
+      <span>🔄</span><span>🔄</span><span>🔄</span>
+      <span class="baz-arrow">→</span>
+      <span>🚀</span>
+      <span class="baz-tag">UNBLOCKABLE</span>
+    </div>
+  </div>
+</div>
+
+<hr class="dline">
+
+<!-- FEATURES -->
+<div class="sec">
+  <div class="sec-lbl">Why it works</div>
+  <h2>BUILT DIFFERENT.</h2>
+  <ul class="fl">
+    <li><span class="fic">✓</span><div><strong>Zero RNG.</strong> Every outcome is pure player skill. No random crits, no luck-based mechanics, ever.</div></li>
+    <li><span class="fic">✓</span><div><strong>Perfect timing layer.</strong> A 250ms sweet spot on every beat rewards godlike reflexes at the highest level.</div></li>
+    <li><span class="fic">✓</span><div><strong>Instant recognition.</strong> If you played 007 / Standoff / Shotgun in school, you already understand the meta.</div></li>
+    <li><span class="fic">✓</span><div><strong>Clip-made mechanics.</strong> "He reloaded three times... BAZOOKA while I was blocking!" — engineered for TikTok/X virality.</div></li>
+    <li><span class="fic">✓</span><div><strong>Tournament-ready from day one.</strong> No pay-to-win. Cosmetic NFTs only. Ranked seasons coming.</div></li>
+  </ul>
+</div>
+
+<hr class="dline">
+
+<!-- HARDWARE TEASER -->
+<div class="sec">
+  <div class="sec-lbl">Coming soon</div>
+  <h2>FEEL THE BEAT.</h2>
+  <div class="hw-card">
+    <div class="badge">HARDWARE — 2027</div>
+    <h3>THE PALMSTONE</h3>
+    <p>A matte oval haptic controller — fits your palm, flush button, synced vibration beats. Reload with a quick squeeze. Shoot with a swipe. Block with a hold. No screen required. The future of the game, in your hand.</p>
+  </div>
+</div>
+
+<!-- BOTTOM AD -->
+<div class="ad-slot rect" id="early" style="margin-top:0">
+  <!-- AdSense 300×250 -->
+  AD SLOT — 300×250 RECTANGLE
+</div>
+
+<!-- EMAIL CAPTURE -->
+<div class="sec" style="padding-bottom:72px">
+  <div class="email-box">
+    <h3>EARLY ACCESS</h3>
+    <p>Multiplayer, ranked seasons, the Palmstone hardware, and the first AR Duel Championship are coming. Get on the list.</p>
+    <div class="email-form">
+      <input class="email-in" type="email" id="email-in" placeholder="your@email.com">
+      <button class="email-sub" onclick="subEmail()">NOTIFY ME</button>
+    </div>
+    <p id="email-msg"></p>
+  </div>
+</div>
+
+<!-- FOOTER AD -->
+<div class="ad-slot">
+  AD SLOT — 728×90 LEADERBOARD
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="#">Twitter/X</a>
+    <a href="#">TikTok</a>
+    <a href="#">Discord</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms</a>
+    <a href="#">Press Kit</a>
+  </div>
+  <div class="footer-copy">
+    © 2026 AR Duel. All rights reserved.<br>
+    Created by Aure Marx · Built for the future
+  </div>
+</footer>
+
+<script>
+function subEmail(){
+  const v=document.getElementById('email-in').value.trim();
+  const msg=document.getElementById('email-msg');
+  if(!v.includes('@')){msg.textContent='Please enter a valid email.';msg.style.color='#ff4040';return;}
+  // TODO: POST to your Mailchimp/ConvertKit API endpoint
+  // fetch('/api/subscribe',{method:'POST',body:JSON.stringify({email:v}),headers:{'Content-Type':'application/json'}})
+  msg.textContent="YOU'RE ON THE LIST. WE'LL BE IN TOUCH.";
+  msg.style.color='var(--cyan)';
+  document.getElementById('email-in').value='';
+}
+</script>
+</body>
+</html>
