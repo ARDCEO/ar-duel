@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — AR Duel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050d;--ink:#0b0b18;--surface:#12121f;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --cyan:#3dffd4;--txt:#eeeeff;--muted:rgba(238,238,255,0.45);--dim:rgba(238,238,255,0.2);
+  --disp:'Bebas Neue',sans-serif;--mono:'DM Mono',monospace;--r:4px;--rl:8px;
+}
+html{background:var(--bg)}
+body{color:var(--txt);font-family:var(--mono);background:var(--bg)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 6px)}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:rgba(5,5,13,.92);border-bottom:.5px solid var(--border);backdrop-filter:blur(16px)}
+.nav-logo{font-family:var(--disp);font-size:20px;letter-spacing:3px;color:var(--txt);text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-logo .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan)}
+.nav-back{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s}
+.nav-back:hover{color:var(--txt)}
+.wrap{max-width:680px;margin:0 auto;padding:56px 24px 80px;position:relative;z-index:1}
+.page-tag{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.page-h1{font-family:var(--disp);font-size:clamp(36px,8vw,56px);letter-spacing:2px;margin-bottom:6px}
+.page-date{font-size:11px;color:var(--dim);letter-spacing:1px;margin-bottom:40px}
+.doc-section{margin-bottom:36px}
+.doc-section h2{font-family:var(--disp);font-size:20px;letter-spacing:1px;color:var(--cyan);margin-bottom:12px;padding-bottom:8px;border-bottom:.5px solid var(--border)}
+.doc-section p{font-size:13px;color:var(--muted);line-height:1.85;margin-bottom:12px}
+.doc-section ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.doc-section ul li{font-size:13px;color:var(--muted);line-height:1.7;padding-left:16px;position:relative}
+.doc-section ul li::before{content:'—';position:absolute;left:0;color:var(--dim)}
+.doc-section a{color:var(--cyan);text-decoration:none}
+.doc-section a:hover{text-decoration:underline}
+.highlight{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin:12px 0}
+.highlight p{margin-bottom:0}
+footer{position:relative;z-index:1;border-top:.5px solid var(--border);padding:24px;text-align:center}
+.footer-links{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-decoration:none}
+.footer-links a:hover{color:var(--muted)}
+.footer-copy{font-size:10px;color:var(--dim);letter-spacing:1px}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><div class="dot"></div>AR DUEL</a>
+  <a href="/" class="nav-back">← Back to site</a>
+</nav>
+<div class="wrap">
+  <div class="page-tag">Legal</div>
+  <h1 class="page-h1">PRIVACY POLICY</h1>
+  <p class="page-date">Last updated: March 2026 · arduel.com</p>
+
+  <div class="doc-section">
+    <h2>Overview</h2>
+    <p>AR Duel ("we," "our," or "us") operates arduel.com. This Privacy Policy explains how we collect, use, and protect information when you visit our website and play our game. We are committed to protecting your privacy and being transparent about our data practices.</p>
+    <div class="highlight"><p>Short version: We collect minimal data. We use it to run the site, improve the game, and serve relevant ads. We do not sell your personal information to third parties.</p></div>
+  </div>
+
+  <div class="doc-section">
+    <h2>Information We Collect</h2>
+    <p>We collect the following types of information:</p>
+    <ul>
+      <li><strong style="color:var(--txt)">Email address</strong> — only if you voluntarily submit it through our early access signup form.</li>
+      <li><strong style="color:var(--txt)">Usage data</strong> — pages visited, time spent, actions taken in the game (via Google Analytics 4). This data is anonymized and aggregated.</li>
+      <li><strong style="color:var(--txt)">Device and browser information</strong> — browser type, operating system, screen size. Collected automatically for analytics and compatibility purposes.</li>
+      <li><strong style="color:var(--txt)">IP address</strong> — collected automatically by our hosting provider (Netlify) and analytics services. Used for approximate geographic analytics only.</li>
+      <li><strong style="color:var(--txt)">Cookies</strong> — used by Google Analytics and Google AdSense. See the Cookies section below.</li>
+    </ul>
+    <p>We do not collect: passwords, payment card data (handled entirely by Stripe), government IDs, or precise location data.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>How We Use Your Information</h2>
+    <ul>
+      <li>To operate and improve the AR Duel game and website</li>
+      <li>To send you updates about AR Duel (only if you opted in via email signup)</li>
+      <li>To serve relevant advertisements through Google AdSense</li>
+      <li>To analyze traffic and gameplay patterns to improve user experience</li>
+      <li>To comply with legal obligations</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h2>Google AdSense and Advertising</h2>
+    <p>We use Google AdSense to display advertisements on our site. Google AdSense uses cookies to serve ads based on your prior visits to this website and other websites. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank">Google Ads Settings</a>.</p>
+    <p>Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to our site and other sites on the internet. For more information about Google's privacy practices, visit the <a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a>.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Google Analytics</h2>
+    <p>We use Google Analytics 4 to understand how visitors interact with our website. Google Analytics collects anonymized usage data including pages viewed, time on site, and general geographic location. This data does not identify you personally.</p>
+    <p>You can opt out of Google Analytics tracking by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank">Google Analytics Opt-out Browser Add-on</a>.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Cookies</h2>
+    <p>Our website uses cookies — small text files stored on your device. We use:</p>
+    <ul>
+      <li><strong style="color:var(--txt)">Analytics cookies</strong> — Google Analytics (ga, _gid, _gat). Help us understand site usage. Expire after 2 years or session end.</li>
+      <li><strong style="color:var(--txt)">Advertising cookies</strong> — Google AdSense. Used to serve relevant ads. Controlled by Google's privacy settings.</li>
+      <li><strong style="color:var(--txt)">Functional cookies</strong> — Store local game preferences (win/loss records). Never transmitted to our servers.</li>
+    </ul>
+    <p>You can control cookies through your browser settings. Disabling cookies may affect site functionality and ad relevance.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Payments and Crypto Wallets</h2>
+    <p>When purchasing Duel Credits with USD, all payment processing is handled by Stripe, Inc. We never see or store your card number. Stripe's privacy policy applies to payment data: <a href="https://stripe.com/privacy" target="_blank">stripe.com/privacy</a>.</p>
+    <p>When connecting a Solana wallet, we receive only your public wallet address. We never have access to your private keys or seed phrase. Never share your seed phrase with anyone, including AR Duel.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Data Retention</h2>
+    <p>Email addresses are retained until you unsubscribe. Analytics data is retained for 14 months per Google Analytics default settings. Local game data (stored in your browser) remains until you clear your browser storage.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Children's Privacy</h2>
+    <p>AR Duel is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided us with personal information, please contact us at privacy@arduel.com and we will delete it promptly.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Your Rights</h2>
+    <p>Depending on your location, you may have rights including: access to your data, correction of inaccurate data, deletion of your data, and opt-out of certain data uses. To exercise these rights, contact us at <a href="mailto:privacy@arduel.com">privacy@arduel.com</a>.</p>
+    <p>To unsubscribe from our email list, click the unsubscribe link in any email we send, or contact us directly.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy as our services evolve. We will post the updated date at the top of this page. Continued use of arduel.com after changes constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>Contact</h2>
+    <p>Questions about this Privacy Policy? Contact us at <a href="mailto:privacy@arduel.com">privacy@arduel.com</a> or through our Discord server.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="ar_duel_game.html">Play</a>
+  </div>
+  <div class="footer-copy">© 2026 AR Duel · arduel.com</div>
+</footer>
+</body>
+</html>
