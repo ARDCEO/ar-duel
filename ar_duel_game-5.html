@@ -180,13 +180,65 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .rf-hit{color:var(--red)}.rf-blk{color:var(--cyan)}.rf-baz{color:var(--amber)}.rf-fall{color:var(--red);font-size:36px}
 @keyframes rfOut{0%{opacity:1;transform:translateX(-50%) scale(1)}60%{opacity:1}100%{opacity:0;transform:translateX(-50%) scale(1.12)}}
 
-/* ── RESULT ── */
+/* ── RANK SYSTEM ── */
+.rank-badge{display:inline-flex;align-items:center;gap:5px;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:.5px solid;font-family:var(--mono);font-weight:500}
+.rank-rookie{color:#8a8a9a;border-color:#8a8a9a;background:rgba(138,138,154,.08)}
+.rank-duelist{color:#3dffd4;border-color:#3dffd4;background:rgba(61,255,212,.08)}
+.rank-sharpshooter{color:#ffd23f;border-color:#ffd23f;background:rgba(255,210,63,.08)}
+.rank-veteran{color:#4db8ff;border-color:#4db8ff;background:rgba(77,184,255,.08)}
+.rank-elite{color:#ff6b35;border-color:#ff6b35;background:rgba(255,107,53,.08)}
+.rank-champion{color:#cc44ff;border-color:#cc44ff;background:rgba(204,68,255,.08)}
+.rank-legend{color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,.12);animation:legend-pulse 2s ease infinite alternate}
+@keyframes legend-pulse{from{box-shadow:0 0 6px rgba(255,215,0,.3)}to{box-shadow:0 0 18px rgba(255,215,0,.7)}}
+.rank-prog-wrap{width:100%;max-width:180px;margin:4px auto 0}
+.rank-prog-bar{height:2px;background:rgba(255,255,255,.1);border-radius:1px;overflow:hidden;margin-top:2px}
+.rank-prog-fill{height:100%;border-radius:1px;transition:width .4s ease}
+.rank-prog-lbl{font-size:7px;letter-spacing:1px;color:var(--muted);text-align:center}
+/* Rank-up overlay */
+#rankup-ov{position:fixed;inset:0;z-index:98;background:rgba(5,5,13,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s}
+#rankup-ov.on{opacity:1;pointer-events:all}
+.ru-pre{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.ru-rank{font-family:var(--disp);font-size:clamp(42px,13vw,78px);letter-spacing:4px;margin-bottom:6px}
+.ru-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:28px}
+
+/* ── COSMETICS SCAFFOLD ── */
+/* Beat ring skin variants — active class applied to .ring */
+.ring-skin-void{border-color:rgba(100,50,200,.6);box-shadow:0 0 8px rgba(100,50,200,.4)}
+.ring-skin-void.pulse{border-color:#9933ff;box-shadow:0 0 18px rgba(153,51,255,.7)}
+.ring-skin-fire{border-color:rgba(255,80,20,.6);box-shadow:0 0 8px rgba(255,80,20,.3)}
+.ring-skin-fire.pulse{border-color:#ff4400;box-shadow:0 0 18px rgba(255,68,0,.8)}
+.ring-skin-gold{border-color:rgba(255,215,0,.6);box-shadow:0 0 8px rgba(255,215,0,.3)}
+.ring-skin-gold.pulse{border-color:#ffd700;box-shadow:0 0 18px rgba(255,215,0,.8)}
+/* Default ring (cyan) already defined above */
+
+/* Hit marker style variants */
+.hm-style-skull .hm::before{content:'💀 '}
+.hm-style-fire .hm{text-shadow:0 0 14px #ff4400,0 0 28px #ff6600}
+.hm-style-ghost .hm{opacity:.75;filter:blur(.5px)}
+
+/* Title badge */
+.player-title{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-top:2px;min-height:10px}
+
+/* Season pass scaffold */
+.sp-track{display:flex;gap:4px;align-items:center;margin-top:8px}
+.sp-node{width:10px;height:10px;border-radius:50%;border:.5px solid var(--border2);background:var(--surface);transition:background .2s}
+.sp-node.done{background:var(--cyan);border-color:var(--cyan)}
+.sp-node.active{background:var(--amber);border-color:var(--amber);animation:sp-pulse .9s ease infinite alternate}
+@keyframes sp-pulse{from{box-shadow:0 0 3px rgba(255,210,63,.3)}to{box-shadow:0 0 9px rgba(255,210,63,.8)}}
+
+/* ── RESULT SCREEN ── */
 #sr{background:rgba(5,5,13,.9)}
-.rt{font-family:var(--disp);font-size:clamp(40px,12vw,68px);letter-spacing:3px}
-.rt.win{color:var(--cyan)}.rt.lose{color:var(--red)}.rt.draw{color:var(--amber)}
-.rsub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:5px 0 20px}
-.srow{display:flex;gap:22px;margin-bottom:20px}
-.si{text-align:center}.sv{font-family:var(--disp);font-size:32px}.sl2{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.rt{font-family:var(--disp);font-size:clamp(44px,13vw,82px);letter-spacing:3px;line-height:1}
+.rt.win{color:var(--cyan);text-shadow:0 0 40px rgba(61,255,212,.35)}
+.rt.lose{color:var(--red);text-shadow:0 0 40px rgba(255,64,64,.3)}
+.rt.draw{color:var(--amber)}
+.rsub{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin:8px 0 22px}
+.srow{display:flex;gap:32px;margin-bottom:16px;justify-content:center}
+.si{text-align:center}
+.sv{font-family:var(--disp);font-size:42px;color:var(--txt);line-height:1}
+.sl2{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+/* Rank section on result screen */
+#sr-rank{margin:4px 0 18px;display:flex;flex-direction:column;align-items:center;gap:0}
 
 </style>
 <!-- Google tag (gtag.js) -->
@@ -197,7 +249,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   gtag("js", new Date());
   gtag("config", "G-TQPBY9KWDL");
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8836165506742958" crossorigin="anonymous"></script>
 </head>
 <body>
 <canvas id="c3d"></canvas>
@@ -268,6 +319,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="ammo-row-lbl"><div class="ammo-row" id="c-pl-am"></div><span class="ammo-lbl">AMMO</span></div>
     <div class="baz-tag" id="c-pl-baz">⚡ BAZOOKA</div>
     <div class="void-warn" id="c-void-warn">⚠ EDGE</div>
+    <div id="c-rank-badge" style="margin-top:4px"></div>
   </div>
 </div>
 
@@ -291,6 +343,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="ammo-row" id="a-pl-am"></div>
       <div class="baz-tag" id="a-pl-baz">⚡ BAZOOKA</div>
       <div class="void-warn" id="a-void-warn">⚠ EDGE</div>
+      <div id="a-rank-badge" style="margin-top:3px"></div>
     </div>
   </div>
 </div>
@@ -317,9 +370,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="si"><div class="sv" id="stat-w">0</div><div class="sl2">WINS</div></div>
     <div class="si"><div class="sv" id="stat-l">0</div><div class="sl2">LOSSES</div></div>
   </div>
+  <div id="sr-rank"></div>
   <button class="btn prim" onclick="goPlay()">PLAY AGAIN</button>
   <button class="btn ghost" onclick="backToMenu()">MENU</button>
   <a class="btn ghost" href="https://discord.gg/JWtfZv7gaj" target="_blank" style="display:block;text-align:center;text-decoration:none">💬 JOIN DISCORD</a>
+</div>
+
+<!-- RANK UP OVERLAY -->
+<div id="rankup-ov">
+  <div class="ru-pre">🏆 Rank Up</div>
+  <div class="ru-rank" id="ru-rank-name"></div>
+  <div class="ru-sub" id="ru-rank-sub">NEW RANK ACHIEVED</div>
+  <button class="btn prim" onclick="dismissRankup()">CONTINUE</button>
 </div>
 
 
@@ -339,17 +401,151 @@ function saveState(){
 }
 
 // ══════════════════════════════════════════════
-// TITLE SCREEN
+// RANK SYSTEM
 // ══════════════════════════════════════════════
+const RANKS=[
+  {id:'rookie',      label:'ROOKIE',       icon:'▪',  min:0,   color:'#8a8a9a'},
+  {id:'duelist',     label:'DUELIST',      icon:'🔵', min:5,   color:'#3dffd4'},
+  {id:'sharpshooter',label:'SHARPSHOOTER', icon:'🟡', min:15,  color:'#ffd23f'},
+  {id:'veteran',     label:'VETERAN',      icon:'🔷', min:35,  color:'#4db8ff'},
+  {id:'elite',       label:'ELITE',        icon:'🔶', min:75,  color:'#ff6b35'},
+  {id:'champion',    label:'CHAMPION',     icon:'💜', min:150, color:'#cc44ff'},
+  {id:'legend',      label:'LEGEND',       icon:'⭐', min:300, color:'#ffd700'},
+];
+
+function getRank(wins){
+  let r=RANKS[0];
+  for(const rank of RANKS){if(wins>=rank.min)r=rank;}
+  return r;
+}
+
+function getNextRank(wins){
+  for(const rank of RANKS){if(wins<rank.min)return rank;}
+  return null;// already legend
+}
+
+function rankProgress(wins){
+  const cur=getRank(wins),nxt=getNextRank(wins);
+  if(!nxt)return 1;
+  const span=nxt.min-cur.min,done=wins-cur.min;
+  return Math.min(1,done/span);
+}
+
+function rankBadgeHTML(wins){
+  const r=getRank(wins),nxt=getNextRank(wins),pct=Math.round(rankProgress(wins)*100);
+  const nxtLbl=nxt?`${wins}/${nxt.min} wins → ${nxt.label}`:'MAX RANK';
+  return `
+    <div class="rank-badge rank-${r.id}" style="margin:0 auto 6px">${r.icon} ${r.label}</div>
+    <div class="rank-prog-wrap">
+      <div class="rank-prog-bar"><div class="rank-prog-fill" style="width:${pct}%;background:${r.color}"></div></div>
+      <div class="rank-prog-lbl" style="margin-top:3px">${nxtLbl}</div>
+    </div>`;
+}
+
+function rankBadgeInline(wins){
+  const r=getRank(wins);
+  return `<span class="rank-badge rank-${r.id}">${r.icon} ${r.label}</span>`;
+}
+
+function checkRankUp(oldWins,newWins){
+  const before=getRank(oldWins),after=getRank(newWins);
+  if(after.id!==before.id){
+    // Rank up!
+    const ov=document.getElementById('rankup-ov');
+    const rn=document.getElementById('ru-rank-name');
+    rn.textContent=after.label;
+    rn.style.color=after.color;
+    ov.classList.add('on');
+    sfx.win();// reuse win fanfare
+  }
+}
+
+function dismissRankup(){
+  document.getElementById('rankup-ov').classList.remove('on');
+}
+
+// ══════════════════════════════════════════════
+// COSMETICS SCAFFOLD
+// (Dormant until multiplayer — structure ready)
+// ══════════════════════════════════════════════
+const COSMETICS_DEFAULT={
+  ringSkin:   'default', // default | void | fire | gold
+  hitStyle:   'default', // default | skull | fire | ghost
+  title:      '',        // e.g. "THE BAZOOKA KID"
+  winEmote:   'none',    // none | salute | flex | taunt (post-multiplayer)
+  seasonPass: false,     // true when purchased
+  spProgress: 0,         // 0-20 matches completed this season
+  ownedSkins: [],        // array of skin IDs owned
+};
+
+let COSMETICS=JSON.parse(localStorage.getItem('arduel_cosmetics')||JSON.stringify(COSMETICS_DEFAULT));
+
+function saveCosmetics(){
+  localStorage.setItem('arduel_cosmetics',JSON.stringify(COSMETICS));
+}
+
+function applyRingSkin(skin){
+  // Applies to all ring elements across both HUD modes
+  ['c-ring','a-ring'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.className='ring'; // reset
+    if(skin&&skin!=='default')el.classList.add('ring-skin-'+skin);
+  });
+}
+
+function applyTitle(title){
+  // Title displayed under rank badge — stub for multiplayer profile display
+  COSMETICS.title=title;saveCosmetics();
+}
+
+// Skin unlock check — called on rank up and on Founder Pack detection
+function checkCosmeticUnlocks(wins){
+  // Sharpshooter rank (15 wins) unlocks void ring skin
+  if(wins>=15&&!COSMETICS.ownedSkins.includes('void')){
+    COSMETICS.ownedSkins.push('void');saveCosmetics();
+  }
+  // Veteran rank (35 wins) unlocks fire ring skin
+  if(wins>=35&&!COSMETICS.ownedSkins.includes('fire')){
+    COSMETICS.ownedSkins.push('fire');saveCosmetics();
+  }
+  // Legend (300 wins) unlocks gold ring skin
+  if(wins>=300&&!COSMETICS.ownedSkins.includes('gold')){
+    COSMETICS.ownedSkins.push('gold');saveCosmetics();
+  }
+}
+
+// SEASON PASS SCAFFOLD
+// Structure: 20-match season, 6 reward nodes
+const SP_REWARDS=[
+  {at:1,  reward:'Duel Credits ×50',  type:'currency'},
+  {at:5,  reward:'Hit Marker: Fire',  type:'cosmetic'},
+  {at:10, reward:'Title: GRINDER',    type:'title'},
+  {at:15, reward:'Ring Skin: Void',   type:'cosmetic'},
+  {at:18, reward:'Duel Credits ×200', type:'currency'},
+  {at:20, reward:'Emote: Salute',     type:'emote'},
+];
+
+function spProgressHTML(){
+  if(!COSMETICS.seasonPass)return '';
+  const prog=COSMETICS.spProgress;
+  const nodes=SP_REWARDS.map(r=>`<div class="sp-node${prog>=r.at?' done':prog>=r.at-1?' active':''}" title="${r.reward}"></div>`).join('');
+  return `<div class="sp-track" style="justify-content:center">${nodes}</div>
+          <div style="font-size:7px;color:var(--muted);text-align:center;margin-top:3px;letter-spacing:1px">${prog}/20 MATCHES</div>`;
+}
+
+
 function renderTitle(){
   const c=document.getElementById('play-btns');
   c.innerHTML=`
+    <div style="margin-bottom:12px">${rankBadgeInline(gWins)}</div>
     <div class="mode-lbl">SELECT MODE</div>
     <div class="mode-row">
       <button class="btn prim" style="flex:1;margin-bottom:0" onclick="startGame('2d')">CLASSIC</button>
       <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
     </div>
     <div style="height:8px"></div>`;
+  // Apply active cosmetics
+  applyRingSkin(COSMETICS.ringSkin);
 }
 
 // ══════════════════════════════════════════════
@@ -378,6 +574,12 @@ function renderG(){
   });
   document.getElementById('void-edge').classList.toggle('warn',curMode==='3d'&&cMap==='platform'&&G.p.vm>=2);
   if(!G.locked)document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
+  // Swap camera weapon: bazooka when cr>=3, pistol otherwise
+  if(curMode==='3d'&&cwG&&bazWep){
+    const isBaz=G.p.cr>=3;
+    cwG.visible=!isBaz;
+    bazWep.visible=isBaz;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -492,7 +694,7 @@ function showStreak(){
 // ══════════════════════════════════════════════
 let T=null; // THREE namespace (set after dynamic load)
 let tScene=null,tCam=null,tRend=null;
-let c2=null,arenaG=null,bwG=null,cwG=null,cfl=null;
+let c2=null,arenaG=null,bwG=null,cwG=null,cfl=null,bazWep=null,bzFl=null;
 let aLights=[],shk=0;
 
 function loadThree(cb){
@@ -558,12 +760,30 @@ function initThree(){
   }
   c2=mkChar(0xff4040);c2.position.set(0,0,-3.8);c2.rotation.y=0;tScene.add(c2);
 
-  // Camera weapon
+  // Camera weapon — PISTOL
   cwG=new T.Group();
   const cwb=bx(.07,.07,.48,lm(0x222233));cwb.position.z=-.26;
   const cwgp=bx(.07,.22,.12,lm(0x333344));cwgp.position.set(0,-.12,0);
   cwG.add(cwb,cwgp);cwG.position.set(.3,-.27,-.58);tCam.add(cwG);
   cfl=bx(.28,.28,.01,bm(0xFFFF44));cfl.material.opacity=0;cfl.position.set(0,0,-.55);cwG.add(cfl);
+
+  // Camera weapon — BAZOOKA (shown when p.cr >= 3)
+  const bzG=new T.Group();
+  // Main tube — chunky cylinder approximated with boxes
+  const bzTube=bx(.18,.18,.72,lm(0x111122));bzTube.position.z=-.36;bzG.add(bzTube);
+  const bzTube2=bx(.22,.22,.18,lm(0x0a0a18));bzTube2.position.z=-.66;bzG.add(bzTube2);// front bell
+  // Blue glow strip along side
+  const bzGlow=bx(.24,.04,.58,new T.MeshBasicMaterial({color:0x3dffd4,transparent:true,opacity:.85}));bzGlow.position.set(0,-.1,-.36);bzG.add(bzGlow);
+  // Yellow warning band
+  const bzBand=bx(.25,.06,.08,new T.MeshBasicMaterial({color:0xffd23f,transparent:true,opacity:.9}));bzBand.position.set(0,0,-.18);bzG.add(bzBand);
+  // Handle/grip
+  const bzGrip=bx(.1,.28,.12,lm(0x222233));bzGrip.position.set(0,-.2,-.1);bzG.add(bzGrip);
+  // Red trigger button
+  const bzBtn=bx(.04,.04,.04,new T.MeshBasicMaterial({color:0xff2020}));bzBtn.position.set(.06,.08,-.06);bzG.add(bzBtn);
+  // Muzzle flash (bigger for bazooka)
+  const bzFl_inner=bx(.55,.55,.01,bm(0xFF8800));bzFl_inner.material.opacity=0;bzFl_inner.position.set(0,0,-.76);bzG.add(bzFl_inner);
+  bzG.position.set(.15,-.3,-.52);bzG.visible=false;tCam.add(bzG);
+  bazWep=bzG; bzFl=bzFl_inner; // expose to module scope
 
   // Block wall (camera-attached)
   bwG=new T.Group();bwG.position.set(0,-1.9,-.72);
@@ -587,6 +807,8 @@ function initThree(){
     updParts(dt);
     bwG.position.y+=(bwG._ty-bwG.position.y)*Math.min(1,dt*14);
     cwG.position.y=-.27+Math.sin(lc.t*1.4)*.005;cwG.rotation.z=Math.sin(lc.t*.9)*.008;
+    // Bazooka has heavier idle sway
+    bazWep.position.y=-.3+Math.sin(lc.t*1.1)*.008;bazWep.rotation.z=Math.sin(lc.t*.7)*.012;
     if(shk>0){tCam.position.x=CB.x+(Math.random()-.5)*shk;tCam.position.y=CB.y+(Math.random()-.5)*shk*.5;shk-=dt*5;if(shk<=0){shk=0;tCam.position.copy(CB)}}
     tCam.lookAt(CL);tRend.render(tScene,tCam);
   }
@@ -723,7 +945,35 @@ function resolve(pa,aa,pp){
     p.ammo--;const dmg=pBaz?2:1;
     if(aa!=='block'||pBaz){
       a.hp=Math.max(0,a.hp-dmg);
-      if(curMode==='3d'){setAnim3('hit',.4);spawnPts(new T.Vector3(0,1.8,-3.8),pBaz?0xffaa00:0xff5555,pBaz?16:10);shk=pBaz?.18:.08}
+      if(curMode==='3d'){
+        if(pBaz){
+          // BAZOOKA HIT — full spectacle
+          setAnim3('bazooka',.75);// longer, more dramatic
+          // Massive orange+amber particle burst
+          spawnPts(new T.Vector3(0,1.8,-3.8),0xff6600,28);
+          spawnPts(new T.Vector3(0,1.8,-3.8),0xffaa00,18);
+          spawnPts(new T.Vector3(0,1.0,-3.8),0xff2200,14);
+          // Big camera slam shake
+          shk=.38;
+          // Bazooka muzzle flash
+          bzFl.material.opacity=1;setTimeout(()=>bzFl.material.opacity=0,180);
+          // Shockwave ring — quick scale-out plane
+          const swMat=new T.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:.7,side:T.DoubleSide});
+          const sw=new T.Mesh(new T.PlaneGeometry(.1,.1),swMat);
+          sw.position.set(0,1.8,-3.8);sw.rotation.x=Math.PI/2;tScene.add(sw);
+          let swT=0;
+          const swI=setInterval(()=>{
+            swT+=0.04;sw.scale.set(swT*18,swT*18,1);
+            swMat.opacity=Math.max(0,.7-(swT*2.2));
+            if(swT>0.32){clearInterval(swI);tScene.remove(sw)}
+          },16);
+        } else {
+          setAnim3('hit',.4);
+          spawnPts(new T.Vector3(0,1.8,-3.8),0xff5555,10);
+          shk=.08;
+          cfl.material.opacity=1;setTimeout(()=>cfl.material.opacity=0,110);
+        }
+      }
       showHM('en',dmg,pBaz);msg=pBaz?'BAZOOKA!':'HIT!';mcls=pBaz?'rf-baz':'rf-hit';
       pBaz?sfx.baz():sfx.hit();
     } else {showRF('BLOCKED!','rf-blk');sfx.block()}
@@ -759,11 +1009,20 @@ function endMatch(){
   clearInterval(G._bi);clearInterval(G._ti);
   const won=G.a.hp<=0||(G.beat>=G.maxBeats&&G.p.hp>G.a.hp);
   const tied=G.p.hp===G.a.hp&&G.beat>=G.maxBeats;
+  const oldWins=gWins;
   if(won&&!tied) gWins++;
   else if(!tied) gLosses++;
   saveState();
+  // Check rank up + cosmetic unlocks
+  if(won&&!tied){
+    checkRankUp(oldWins,gWins);
+    checkCosmeticUnlocks(gWins);
+    if(COSMETICS.seasonPass){COSMETICS.spProgress=Math.min(20,COSMETICS.spProgress+1);saveCosmetics();}
+  }
   document.getElementById('stat-w').textContent=gWins;
   document.getElementById('stat-l').textContent=gLosses;
+  // Show rank progress on result screen
+  document.getElementById('sr-rank').innerHTML=rankBadgeHTML(gWins)+spProgressHTML();
   const t=document.getElementById('rtitle'),s=document.getElementById('rsub');
   if(tied){t.textContent='DRAW';t.className='rt draw';s.textContent='BOTH SURVIVE';sfx.block()}
   else if(won){t.textContent='VICTORY';t.className='rt win';s.textContent='OPPONENT ELIMINATED';sfx.win()}
@@ -868,6 +1127,11 @@ function _startMatch(){
   G.p={hp:3,ammo:0,cr:0,vm:0};G.a={hp:3,ammo:0,cr:0,vm:0};
   G.beat=0;G.pAct=null;G.pPerf=false;G.locked=false;G.running=true;
   renderG();document.getElementById('lock-txt').textContent='';
+  // Show rank in both HUDs
+  const rb=rankBadgeInline(gWins);
+  const cRB=document.getElementById('c-rank-badge');if(cRB)cRB.innerHTML=rb;
+  const aRB=document.getElementById('a-rank-badge');if(aRB)aRB.innerHTML=rb;
+  applyRingSkin(COSMETICS.ringSkin);
   document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
   document.getElementById('a-shoot').classList.add('dis');
   startTBar();G._bi=setInterval(doBeat,G.beatMs);
