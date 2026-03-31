@@ -355,7 +355,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 
 <!-- SHARED BUTTONS -->
 <div id="hud-btns">
-  <div class="lock-row" id="lock-txt"></div>
+  <div class="lock-row" id="lock-txt">
+    <span id="mute-btn" onclick="bgToggleMute()" style="position:absolute;right:10px;top:6px;font-size:16px;cursor:pointer;opacity:.6;pointer-events:all"></span>
+  </div>
   <div class="abtn ar" id="a-reload" onclick="act('reload')">
     <div class="aicon">🔄</div><div class="albl">RELOAD</div><div class="ahint">+1 AMMO</div>
   </div>
@@ -610,6 +612,65 @@ const sfx={
   rld:()=>tone(270,.06,'triangle',.11),
   fall:()=>{tone(200,.05,'sawtooth',.3);setTimeout(()=>tone(80,.4,'sawtooth',.35),100)},
 };
+
+// ══════════════════════════════════════════════
+// BACKGROUND MUSIC
+// ══════════════════════════════════════════════
+const bgTracks={
+  hallway: new Audio('music_hallway.mp3'),
+  platform: new Audio('music_void.mp3'),
+};
+Object.values(bgTracks).forEach(t=>{
+  t.loop=true;
+  t.volume=0;// start silent, fade in
+});
+
+let bgMuted = localStorage.getItem('arduel_mute')==='1';
+let bgCurrent = null;
+let bgFadeInterval = null;
+
+function bgPlay(map){
+  if(bgFadeInterval) clearInterval(bgFadeInterval);
+  // Stop any currently playing track
+  Object.values(bgTracks).forEach(t=>{t.pause();t.currentTime=0;t.volume=0});
+  const track = bgTracks[map] || bgTracks.hallway;
+  bgCurrent = track;
+  if(bgMuted) return;
+  track.play().catch(()=>{});
+  // Fade in to 0.28 over 1.5s
+  let vol=0;
+  bgFadeInterval=setInterval(()=>{
+    vol=Math.min(0.28,vol+0.01);
+    track.volume=vol;
+    if(vol>=0.28) clearInterval(bgFadeInterval);
+  },50);
+}
+
+function bgStop(){
+  if(bgFadeInterval) clearInterval(bgFadeInterval);
+  if(!bgCurrent) return;
+  // Fade out over 1s
+  const t=bgCurrent;
+  let vol=t.volume;
+  bgFadeInterval=setInterval(()=>{
+    vol=Math.max(0,vol-0.02);
+    t.volume=vol;
+    if(vol<=0){t.pause();t.currentTime=0;clearInterval(bgFadeInterval)}
+  },33);
+}
+
+function bgToggleMute(){
+  bgMuted=!bgMuted;
+  localStorage.setItem('arduel_mute',bgMuted?'1':'0');
+  const btn=document.getElementById('mute-btn');
+  if(btn) btn.textContent=bgMuted?'🔇':'🔊';
+  if(bgMuted){
+    Object.values(bgTracks).forEach(t=>{t.pause();t.volume=0});
+  } else if(bgCurrent){
+    bgCurrent.play().catch(()=>{});
+    bgCurrent.volume=0.28;
+  }
+}
 
 // ══════════════════════════════════════════════
 // AI
@@ -1227,6 +1288,7 @@ function endMatch(){
 }
 
 function showResultScreen(){
+  bgStop();
   document.getElementById('hud-c').classList.remove('on');
   document.getElementById('hud-a').classList.remove('on');
   document.getElementById('hud-btns').classList.remove('on');
@@ -1327,6 +1389,9 @@ function _startMatch(){
     document.getElementById('hud-c').classList.remove('on');
   }
   document.getElementById('hud-btns').classList.add('on');
+  // Music + mute button
+  const mb=document.getElementById('mute-btn');if(mb)mb.textContent=bgMuted?'🔇':'🔊';
+  bgPlay(cMap);
   G.p={hp:3,ammo:0,cr:0,vm:0};G.a={hp:3,ammo:0,cr:0,vm:0};
   G.beat=0;G.pAct=null;G.pPerf=false;G.locked=false;G.running=true;
   renderG();document.getElementById('lock-txt').textContent='';
