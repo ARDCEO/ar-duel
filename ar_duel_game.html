@@ -571,7 +571,8 @@ function pips(id,n,max,base,ext=''){
 }
 function renderG(){
   ['c-','a-'].forEach(p=>{
-    pips(p+'ai-hp',G.a.hp,3,'hp-pip',' e');pips(p+'pl-hp',G.p.hp,3,'hp-pip','');
+    const oppMax=G._oppMaxHp||3;
+    pips(p+'ai-hp',G.a.hp,oppMax,'hp-pip',' e');pips(p+'pl-hp',G.p.hp,3,'hp-pip','');
     pips(p+'ai-am',G.a.ammo,3,'ammo-pip','');pips(p+'pl-am',G.p.ammo,3,'ammo-pip','');
     const bn=document.getElementById(p+'bnum');if(bn)bn.textContent=G.beat;
     const ab=document.getElementById(p+'ai-baz');if(ab)ab.classList.toggle('show',G.a.cr>=3);
@@ -756,8 +757,36 @@ function showStreak(){
 }
 
 // ══════════════════════════════════════════════
-// 3D VISUAL LAYER (lazy — loaded on first 3D play)
+// OPPONENT VARIANTS (rank-based)
 // ══════════════════════════════════════════════
+function getOpponentVariant(wins){
+  if(wins>=300) return 'legend';
+  if(wins>=150) return 'champion';
+  if(wins>=75)  return 'elite';
+  if(wins>=35)  return 'veteran';
+  return 'normal';
+}
+
+// Scream SFX for Champion jump scare
+function sfxScream(){
+  au();
+  // Descending shriek
+  [880,660,440,220,110].forEach((f,i)=>{
+    setTimeout(()=>{
+      tone(f+Math.random()*80,.18,'sawtooth',.35);
+      tone(f*1.5,.12,'square',.15);
+    },i*60);
+  });
+  setTimeout(()=>tone(55,.6,'sawtooth',.5),300);
+}
+
+// Module-level variant state
+let opponentVariant='normal';
+let slimeParticles=[];
+let shadowFlickerT=0;
+let jumpScareActive=false;
+let jumpScareT=0;
+
 let T=null; // THREE namespace (set after dynamic load)
 let tScene=null,tCam=null,tRend=null;
 let CB=null,CL=null; // camera base position/lookat — set in initThree
@@ -775,6 +804,109 @@ function loadThree(cb){
   s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
   s.onload=()=>{T=THREE;cb()};
   document.head.appendChild(s);
+}
+
+// ── OPPONENT 3D BUILDER (module scope — callable from startCD) ──
+function buildOpponent3D(variant){
+  if(!T) return null;
+  const g=new T.Group();
+  const lmv=c=>new T.MeshLambertMaterial({color:c});
+  const bmv=c=>new T.MeshBasicMaterial({color:c,transparent:true,side:T.DoubleSide});
+  const bxv=(w,h,d,m)=>new T.Mesh(new T.BoxGeometry(w,h,d),m);
+  const V={
+    normal:  {skin:0xFFCC88,body:0xff4040,eye:0x111111,eyeGlow:false,scale:1,   dark:null},
+    veteran: {skin:0x88aa66,body:0x336622,eye:0xff0000,eyeGlow:true, scale:1,   dark:0x224411},
+    elite:   {skin:0x77bb44,body:0x224400,eye:0xff2200,eyeGlow:true, scale:1.28,dark:0x1a3300},
+    champion:{skin:0x221122,body:0x110022,eye:0xcc44ff,eyeGlow:true, scale:1,   dark:0x0a0014},
+    legend:  {skin:0x1a1a1a,body:0x2a0a2a,eye:0xffd700,eyeGlow:true, scale:1.15,dark:0x110011},
+  };
+  const cfg=V[variant]||V.normal;
+  const sk=cfg.skin;
+  const dk=cfg.dark||new T.Color(cfg.body).multiplyScalar(.55).getHex();
+  g.scale.set(cfg.scale,cfg.scale,cfg.scale);
+  // Head
+  const hdScale=variant==='elite'?1.15:1;
+  const hd=bxv(.82*hdScale,.82*hdScale,.82*hdScale,lmv(sk));
+  hd.position.y=2.45;hd.castShadow=true;g.add(hd);g._hd=hd;
+  // Eyes
+  const eyeMat=cfg.eyeGlow?new T.MeshBasicMaterial({color:cfg.eye}):lmv(cfg.eye);
+  [-.18,.18].forEach(x=>{const e=bxv(.16,.14,.04,eyeMat.clone());e.position.set(x,2.5,.42);g.add(e)});
+  // Eye glow light
+  if(cfg.eyeGlow){const el=new T.PointLight(cfg.eye,.8,2.5);el.position.set(0,2.5,.6);g.add(el);g._eyeLight=el}
+  // Nose
+  if(variant==='normal'||variant==='veteran'||variant==='elite'){
+    const ns=bxv(.08,.06,.03,lmv(0xEEBB77));ns.position.set(0,2.4,.42);g.add(ns);
+  }
+  // Horns for champion/legend
+  if(variant==='champion'||variant==='legend'){
+    const spkMat=new T.MeshBasicMaterial({color:variant==='legend'?0xffd700:0x9900cc});
+    const spk=bxv(.06,.4,.06,spkMat);spk.position.set(0,3.05,0);g.add(spk);
+    const spk2=bxv(.05,.28,.05,spkMat.clone());spk2.position.set(.18,2.92,0);g.add(spk2);
+    const spk3=bxv(.05,.28,.05,spkMat.clone());spk3.position.set(-.18,2.92,0);g.add(spk3);
+  }
+  // Elite slime drips on face
+  if(variant==='elite'){
+    [-.25,0,.25].forEach((x,i)=>{
+      const drip=bxv(.06,.18+i*.05,.04,new T.MeshBasicMaterial({color:0x44ff44,transparent:true,opacity:.85}));
+      drip.position.set(x,2.28+i*.02,.44);g.add(drip);
+    });
+  }
+  // Torso
+  const trW=variant==='elite'?1.25:0.95;
+  const tr=bxv(trW,1.1,.52,lmv(cfg.body));tr.position.y=1.65;tr.castShadow=true;g.add(tr);g._tr=tr;
+  // Aura lights
+  if(variant==='legend'){const a=new T.PointLight(0xffd700,1.2,4);a.position.set(0,1.8,0);g.add(a);g._aura=a}
+  if(variant==='champion'){const a=new T.PointLight(0x9900cc,.9,3.5);a.position.set(0,1.5,0);g.add(a);g._aura=a}
+  // Arms
+  const ag=new T.Group();ag.position.set(0,1.65,0);
+  const armW=variant==='elite'?0.42:0.3;
+  const aOff=variant==='elite'?0.72:0.63;
+  const la=bxv(armW,.88,armW,lmv(cfg.body));la.position.set(-aOff,0,0);la.castShadow=true;
+  const ra=bxv(armW,.88,armW,lmv(cfg.body));ra.position.set(aOff,0,0);ra.castShadow=true;
+  ag.add(la,ra);g.add(ag);g._ag=ag;
+  // Weapon — barrel points toward player (+Z)
+  const wg=new T.Group();wg.position.set(.63,-.3,.3);
+  const wb=bxv(.1,.1,.62,lmv(0x222233));wb.position.z=.32;
+  const wgp=bxv(.1,.26,.14,lmv(0x333344));wgp.position.set(0,-.14,0);
+  wg.add(wb,wgp,bxv(.14,.14,.28,lmv(0x333344)));ag.add(wg);g._wg=wg;
+  const fl=bxv(.55,.55,.01,bmv(0xFFFF44));fl.material.opacity=0;fl.position.set(0,0,.68);wg.add(fl);g._fl=fl;
+  // Legs
+  const legW=variant==='elite'?0.46:0.34;
+  const legH=variant==='elite'?1.1:0.95;
+  const lOff=variant==='elite'?0.24:0.22;
+  const ll=bxv(legW,legH,legW,lmv(dk));ll.position.set(-lOff,.575,0);ll.castShadow=true;
+  const rl2=bxv(legW,legH,legW,lmv(dk));rl2.position.set(lOff,.575,0);rl2.castShadow=true;
+  g.add(ll,rl2);g._ll=ll;g._rl=rl2;
+  // Ribs for veteran/elite
+  if(variant==='veteran'||variant==='elite'){
+    const ribMat=new T.MeshBasicMaterial({color:variant==='elite'?0x116600:0x442200,transparent:true,opacity:.7});
+    [-0.15,0,.15].forEach((x,i)=>{const rib=bxv(.22,.04,.54,ribMat.clone());rib.position.set(x,1.55+i*.18,0);g.add(rib)});
+  }
+  // Legend ground glow
+  if(variant==='legend'){
+    const glow=new T.Mesh(new T.PlaneGeometry(2.5,2.5),
+      new T.MeshBasicMaterial({color:0xffd700,transparent:true,opacity:.18,side:T.DoubleSide}));
+    glow.rotation.x=-Math.PI/2;glow.position.y=-.14;g.add(glow);g._glow=glow;
+  }
+  // Opponent block wall — rises toward player when AI blocks
+  const owG=new T.Group();
+  owG.position.set(0,-1.9,.72); // starts hidden below floor level, in front of opponent
+  const OTW=.28,OTH=.28,OTD=.09,OGAP=.025;
+  const otmat=new T.MeshLambertMaterial({color:0x2a2a48});
+  for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+    const ot=bxv(OTW,OTH,OTD,otmat.clone());
+    ot.position.set((c-1.5)*(OTW+OGAP),r*(OTH+OGAP),0);owG.add(ot);
+    if(r===3){
+      const oe=bxv(OTW+.01,.025,OTD+.01,new T.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:.55}));
+      oe.position.set((c-1.5)*(OTW+OGAP),r*(OTH+OGAP)+OTH/2+.012,0);owG.add(oe);
+    }
+  }
+  const owt=bxv(4*(OTW+OGAP)+.04,.04,OTD+.02,new T.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:.8}));
+  owt.position.set(0,4*(OTH+OGAP)-.01,0);owG.add(owt);
+  g.add(owG);g._owG=owG;g._owTy=-1.9;
+
+  g._as='idle';g._at=0;g._ad=1;g._bz=-3.8;g._variant=variant;
+  return g;
 }
 
 function initThree(){
@@ -811,31 +943,9 @@ function initThree(){
   const bm=c=>new T.MeshBasicMaterial({color:c,transparent:true,side:T.DoubleSide});
   const bx=(w,h,d,m)=>new T.Mesh(new T.BoxGeometry(w,h,d),m);
 
-  // Opponent character
-  function mkChar(hex){
-    const g=new T.Group();
-    const sk=0xFFCC88,dk=new T.Color(hex).multiplyScalar(.55).getHex();
-    const hd=bx(.82,.82,.82,lm(sk));hd.position.y=2.45;hd.castShadow=true;g.add(hd);
-    [-.18,.18].forEach(x=>{const e=bx(.13,.11,.03,lm(0x111111));e.position.set(x,2.5,.42);g.add(e)});
-    const ns=bx(.08,.06,.03,lm(0xEEBB77));ns.position.set(0,2.4,.42);g.add(ns);
-    const tr=bx(.95,1.1,.52,lm(hex));tr.position.y=1.65;tr.castShadow=true;g.add(tr);g._tr=tr;
-    const ag=new T.Group();ag.position.set(0,1.65,0);
-    const la=bx(.3,.88,.3,lm(hex));la.position.set(-.63,0,0);la.castShadow=true;
-    const ra=bx(.3,.88,.3,lm(hex));ra.position.set(.63,0,0);ra.castShadow=true;
-    ag.add(la,ra);g.add(ag);g._ag=ag;
-    const wg=new T.Group();wg.position.set(.63,-.3,-.3);
-    const wb=bx(.1,.1,.62,lm(0x222233));wb.position.z=-.32;
-    const wgp=bx(.1,.26,.14,lm(0x333344));wgp.position.set(0,-.14,0);
-    const wbd=bx(.14,.14,.28,lm(0x333344));
-    wg.add(wb,wgp,wbd);ag.add(wg);g._wg=wg;
-    const fl=bx(.55,.55,.01,bm(0xFFFF44));fl.material.opacity=0;fl.position.set(0,0,-.68);wg.add(fl);g._fl=fl;
-    const ll=bx(.34,.95,.34,lm(dk));ll.position.set(-.22,.575,0);ll.castShadow=true;
-    const rl2=bx(.34,.95,.34,lm(dk));rl2.position.set(.22,.575,0);rl2.castShadow=true;
-    g.add(ll,rl2);g._ll=ll;g._rl=rl2;g._hd=hd;
-    g._as='idle';g._at=0;g._ad=1;g._bz=-3.8;
-    return g;
-  }
-  c2=mkChar(0xff4040);c2.position.set(0,0,-3.8);c2.rotation.y=0;tScene.add(c2);
+  // Opponent character — variant-aware builder
+  c2=buildOpponent3D(opponentVariant);
+  c2.position.set(0,0,-3.8);c2.rotation.y=0;tScene.add(c2);
 
   // Camera weapon — PISTOL
   cwG=new T.Group();
@@ -883,7 +993,10 @@ function initThree(){
     animC2(dt,lc.t);
     updParts(dt);
     tickVoidFall(dt);
+    tickVariantFX(dt,lc.t);
     bwG.position.y+=(bwG._ty-bwG.position.y)*Math.min(1,dt*14);
+    // Opponent block wall
+    if(c2&&c2._owG) c2._owG.position.y+=(c2._owTy-c2._owG.position.y)*Math.min(1,dt*14);
     cwG.position.y=-.27+Math.sin(lc.t*1.4)*.005;cwG.rotation.z=Math.sin(lc.t*.9)*.008;
     bazWep.position.y=-.3+Math.sin(lc.t*1.1)*.008;bazWep.rotation.z=Math.sin(lc.t*.7)*.012;
     const _CB=window._arduelCB,_CL=window._arduelCL;
@@ -901,10 +1014,11 @@ function rPose(){
   c2.position.set(0,0,c2._bz);
   c2.position.y=0;
   c2.rotation.set(0,0,0);
-  c2.scale.set(1,1,1); // reset scale — void fall shrinks it
+  c2.scale.set(1,1,1);
   c2._ll.rotation.x=0;c2._rl.rotation.x=0;
   c2._fl.material.opacity=0;
   c2._tr.material.emissive=new T.Color(0);
+  if(c2._owG){c2._owTy=-1.9;c2._owG.position.y=-1.9}
 }
 function setAnim3(st,dur){if(!c2)return;c2._as=st;c2._at=0;c2._ad=dur}
 function animC2(dt,clk){
@@ -1075,8 +1189,69 @@ function tickVoidFall(dt){
   updVoidEmbers(dt);
 }
 
-function endVoidFall(){
-  const cb=voidFallState_onDone;
+// ── VARIANT FX TICK ──
+function tickVariantFX(dt,clk){
+  if(!c2||!tScene) return;
+  const v=opponentVariant;
+
+  // ── ELITE: Slime drip particles ──
+  if(v==='elite'&&G.running){
+    if(Math.floor(clk*4)!==Math.floor((clk-dt)*4)){
+      const sm=new T.Mesh(
+        new T.BoxGeometry(.07,.15,.07),
+        new T.MeshBasicMaterial({color:0x44ff44,transparent:true,opacity:.85})
+      );
+      sm.position.set((Math.random()-.5)*.9+c2.position.x,2.2+c2.position.y,c2.position.z+.3);
+      sm._vy=-1.8-Math.random()*1.2;sm._life=1.0;sm._ml=1.0;
+      tScene.add(sm);slimeParticles.push(sm);
+    }
+  }
+  // Update slime particles
+  for(let i=slimeParticles.length-1;i>=0;i--){
+    const s=slimeParticles[i];
+    s.position.y+=s._vy*dt;s._vy+=dt*2.5;
+    s._life-=dt;s.material.opacity=Math.max(0,(s._life/s._ml)*.85);
+    if(s._life<=0||s.position.y<-.5){tScene.remove(s);slimeParticles.splice(i,1)}
+  }
+
+  // ── CHAMPION: Shadow flicker + teleport ──
+  if(v==='champion'&&G.running){
+    shadowFlickerT+=dt;
+    if(c2._aura) c2._aura.intensity=0.6+Math.sin(clk*6)*.4;
+    const fp=shadowFlickerT%3.2;
+    if(fp<0.08){c2.visible=false}
+    else if(fp<0.16){c2.visible=true;c2.position.x=(Math.random()-.5)*0.6}
+    else{c2.visible=true}
+    if(c2.visible) c2.position.x+=(Math.sin(clk*.8)*.4-c2.position.x)*dt*1.2;
+  }
+
+  // ── LEGEND: Aura + ground glow pulse ──
+  if(v==='legend'){
+    if(c2._aura) c2._aura.intensity=1.0+Math.sin(clk*3)*.5;
+    if(c2._glow) c2._glow.material.opacity=0.12+Math.sin(clk*2)*.06;
+  }
+
+  // ── JUMP SCARE ──
+  if(jumpScareActive&&c2){
+    jumpScareT+=dt;
+    const rushSpeed=jumpScareT*jumpScareT*18;
+    c2.position.z=Math.min(-0.8,-3.8+rushSpeed);
+    const sc=1+jumpScareT*2.5;c2.scale.set(sc,sc,sc);c2.visible=true;
+    const fl=document.getElementById('dmg-flash');
+    if(fl&&jumpScareT<.35) fl.classList.add('on');
+    else if(fl) fl.classList.remove('on');
+    if(jumpScareT>0.9) jumpScareActive=false;
+  }
+}
+
+function triggerJumpScare(onDone){
+  if(!c2||opponentVariant!=='champion'){onDone();return}
+  jumpScareActive=true;jumpScareT=0;
+  sfxScream();
+  setTimeout(onDone,1100);
+}
+
+function endVoidFall(){  const cb=voidFallState_onDone;
   voidFallState=null;voidFallT=0;voidLavaT=0;
   if(voidLavaLight) voidLavaLight.intensity=0;
   // Fade out screen overlay
@@ -1187,7 +1362,11 @@ function resolve(pa,aa,pp){
   if(curMode==='3d'){
     if(pa==='shoot'){cfl.material.opacity=1;setTimeout(()=>cfl.material.opacity=0,110)}
     if(aa==='shoot') setAnim3(aBaz?'bazooka':'shoot',.45);
-    if(aa==='block') setAnim3('block',.5);
+    if(aa==='block'){
+      setAnim3('block',.5);
+      // Raise opponent block wall
+      if(c2&&c2._owG) c2._owTy=-.38;
+    }
     if(aa==='reload')setAnim3('reload',.55);
   }
 
@@ -1280,8 +1459,12 @@ function endMatch(){
     if(won){
       triggerOpponentVoidFall(showResultScreen);
     } else {
-      triggerPlayerVoidFall(showResultScreen);
+      // Champion jump scare fires before fall
+      triggerJumpScare(()=>triggerPlayerVoidFall(showResultScreen));
     }
+  } else if(curMode==='3d'&&!won&&!tied){
+    // Champion jump scare in hallway mode too
+    triggerJumpScare(()=>setTimeout(showResultScreen,350));
   } else {
     setTimeout(showResultScreen,350);
   }
@@ -1310,6 +1493,7 @@ function doBeat(){
   const pa=G.pAct||'miss',aa=aiAct(),pp=G.pPerf;
   G.lastBeat=Date.now();G.pAct=null;G.pPerf=false;G.locked=false;
   if(bwG) bwG._ty=-1.9;
+  if(c2&&c2._owG) c2._owTy=-1.9;
   document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
   document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
   document.getElementById('lock-txt').textContent='';
@@ -1353,19 +1537,20 @@ function startCD(){
     loadThree(()=>{
       initThree();
       buildArena3(cMap);
-      if(c2){
-        c2.position.set(0,0,-3.8);
-        c2.rotation.set(0,0,0);
-        c2.scale.set(1,1,1);
-        c2._bz=-3.8;c2._as='idle';
-        rPose();
-      }
+      // Rebuild opponent with current rank variant
+      opponentVariant=getOpponentVariant(gWins);
+      if(c2) tScene.remove(c2);
+      // Clear slime particles from previous match
+      slimeParticles.forEach(p=>tScene.remove(p));slimeParticles=[];
+      jumpScareActive=false;jumpScareT=0;shadowFlickerT=0;
+      c2=buildOpponent3D(opponentVariant);
+      c2.position.set(0,0,-3.8);c2.rotation.y=0;
+      tScene.add(c2);
       document.getElementById('c3d').style.display='block';
       document.getElementById('arena2d').classList.remove('on');
       _countdown();
     });
   } else {
-    // Classic = pure card UI, no arena background, no characters
     document.getElementById('c3d').style.display='none';
     document.getElementById('arena2d').classList.remove('on');
     ch2dPl=null;ch2dOp=null;bwall=null;
@@ -1392,7 +1577,11 @@ function _startMatch(){
   // Music + mute button
   const mb=document.getElementById('mute-btn');if(mb)mb.textContent=bgMuted?'🔇':'🔊';
   bgPlay(cMap);
-  G.p={hp:3,ammo:0,cr:0,vm:0};G.a={hp:3,ammo:0,cr:0,vm:0};
+  G.p={hp:3,ammo:0,cr:0,vm:0};
+  // Legend variant: opponent has 5 HP, player keeps 3
+  const oppMaxHp=opponentVariant==='legend'?5:3;
+  G.a={hp:oppMaxHp,ammo:0,cr:0,vm:0};
+  G._oppMaxHp=oppMaxHp;
   G.beat=0;G.pAct=null;G.pPerf=false;G.locked=false;G.running=true;
   renderG();document.getElementById('lock-txt').textContent='';
   // Show rank in both HUDs
