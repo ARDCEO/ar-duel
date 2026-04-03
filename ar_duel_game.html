@@ -268,7 +268,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .wr-win{color:var(--cyan)}.wr-lose{color:var(--red)}
 
 /* ── DC WALLET & PROFILE ── */
-#sprofile{background:rgba(5,5,13,.98);overflow-y:auto;justify-content:flex-start;padding-top:16px}
+#sprofile{background:rgba(5,5,13,.98);overflow-y:auto;justify-content:flex-start;padding-top:16px;padding-bottom:40px}
 .profile-header{width:100%;max-width:360px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px}
 .profile-close{background:none;border:.5px solid var(--border2);color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:2px;padding:6px 12px;border-radius:3px;cursor:pointer}
 .dc-card{width:100%;max-width:360px;background:linear-gradient(135deg,#0d0d22 0%,#12121f 50%,#0a1a1a 100%);border:.5px solid rgba(61,255,212,.25);border-radius:12px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
@@ -511,6 +511,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
 
+  <!-- TX History — appears right below DC card, above daily reward -->
+  <div id="tx-history" style="display:none;width:100%;max-width:360px;max-height:260px;overflow-y:auto;border:.5px solid var(--border2);border-radius:6px;background:var(--surface);margin-bottom:10px;scrollbar-width:thin;scrollbar-color:rgba(61,255,212,.25) transparent">
+    <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 12px 4px;border-bottom:.5px solid var(--border)">TRANSACTION HISTORY</div>
+    <div class="tx-list" id="tx-list"></div>
+  </div>
+
   <!-- Daily Login Reward -->
   <div class="daily-row" id="daily-reward-row" style="display:none">
     <div class="daily-left">
@@ -539,12 +545,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="profile-stat-row"><span class="psr-label">MIN BALANCE</span><span class="psr-val">500 DC</span></div>
     <div class="profile-stat-row"><span class="psr-label">PLATFORM RAKE</span><span class="psr-val">10% of wager</span></div>
     <div class="profile-stat-row"><span class="psr-label">ELIGIBLE RANKS</span><span class="psr-val">DUELIST +</span></div>
-  </div>
-
-  <!-- TX History (hidden by default) -->
-  <div id="tx-history" style="display:none;width:100%;max-width:360px;max-height:280px;overflow-y:auto;border:.5px solid var(--border2);border-radius:6px;background:var(--surface)">
-    <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:8px 0 4px;padding:0 2px">TRANSACTION HISTORY</div>
-    <div class="tx-list" id="tx-list"></div>
   </div>
 
   <div style="height:30px"></div>
@@ -1390,6 +1390,10 @@ let voidFallT=0,voidLavaT=0,voidEmberTimer=0;
 let voidPlatL=null,voidPlatR=null,voidLavaLight=null;
 let voidEmbers=[];
 
+// Ambient atmosphere particles (embers/moths)
+let ambientParticles=[];
+let ambientTimer=0;
+
 function loadThree(cb){
   if(window.THREE){T=THREE;cb();return;}
   const s=document.createElement('script');
@@ -1596,9 +1600,12 @@ function initThree(){
     updParts(dt);
     tickVoidFall(dt);
     tickVariantFX(dt,lc.t);
+    tickAmbientParticles(dt,lc.t);
     bwG.position.y+=(bwG._ty-bwG.position.y)*Math.min(1,dt*14);
     // Opponent block wall (scene-attached, tracks c2 x position)
     if(c2&&c2._owG){
+      // Freeze wall down if opponent defeated or falling
+      if(!G.running||voidFallState==='opponent') c2._owTy=-1.9;
       c2._owG.position.y+=(c2._owTy-c2._owG.position.y)*Math.min(1,dt*14);
       c2._owG.position.x=c2.position.x;
     }
@@ -1713,10 +1720,98 @@ function clearVoidEmbers(){
   voidEmbers=[];
 }
 
+// ── AMBIENT ATMOSPHERE PARTICLES (embers + moths) ──
+function spawnAmbientParticle(type){
+  if(!tScene)return;
+  const isMoth = type==='moth';
+  const size = isMoth ? 0.04+Math.random()*.06 : 0.03+Math.random()*.05;
+  // Colors: embers are orange/red/amber; moths are cyan/white dim
+  const emberCols=[0xff5500,0xff8800,0xffaa00,0xff3300,0xffcc44];
+  const mothCols=[0x3dffd4,0x88ffee,0x99ffcc,0xaaffdd];
+  const col = isMoth
+    ? mothCols[Math.floor(Math.random()*mothCols.length)]
+    : emberCols[Math.floor(Math.random()*emberCols.length)];
+  const mat = new T.MeshBasicMaterial({color:col,transparent:true,opacity:isMoth?.55:.7});
+  const mesh = new T.Mesh(new T.BoxGeometry(size,size,size),mat);
+  // Spawn spread across the arena
+  const spreadX=(Math.random()-.5)*4.5;
+  const spreadZ=-2+(Math.random()-.5)*12;
+  const startY = isMoth ? 0.5+Math.random()*2.8 : -0.3+Math.random()*0.6;
+  mesh.position.set(spreadX,startY,spreadZ);
+  // Velocity
+  mesh._vx=(Math.random()-.5)*(isMoth?.4:.25);
+  mesh._vy=isMoth?(Math.random()-.5)*.18:(0.15+Math.random()*.55);
+  mesh._vz=(Math.random()-.5)*.2;
+  mesh._life=2.5+Math.random()*3.5;
+  mesh._ml=mesh._life;
+  mesh._type=type;
+  // Moths oscillate - give them a phase
+  mesh._phase=Math.random()*Math.PI*2;
+  mesh._osc=0.3+Math.random()*.5;
+  tScene.add(mesh);
+  ambientParticles.push(mesh);
+}
+
+function tickAmbientParticles(dt,t){
+  if(!tScene||!G.running)return;
+  const isVoid = cMap==='platform';
+  const isHallway = cMap==='hallway';
+  const rank = getRank(gWins);
+  const rankIdx = RANKS.findIndex(r=>r.id===rank.id);
+  const isVeteranPlus = rankIdx>=3; // veteran=3, elite=4, etc
+
+  // Spawn rate: void always gets embers, hallway gets moths at veteran+
+  ambientTimer+=dt;
+  const spawnInterval = isVoid ? 0.12 : 0.22;
+  if(ambientTimer>spawnInterval){
+    ambientTimer=0;
+    if(isVoid){
+      // Void: mostly embers, occasional moth
+      spawnAmbientParticle(Math.random()<.15?'moth':'ember');
+    } else if(isHallway&&isVeteranPlus){
+      // Hallway veteran+: only moths (subtle atmosphere)
+      spawnAmbientParticle('moth');
+    }
+  }
+
+  // Update particles
+  for(let i=ambientParticles.length-1;i>=0;i--){
+    const p=ambientParticles[i];
+    if(p._type==='moth'){
+      // Moths drift and oscillate
+      p.position.x+=p._vx*dt + Math.sin(t*2+p._phase)*p._osc*dt;
+      p.position.y+=p._vy*dt + Math.sin(t*1.4+p._phase*1.3)*.15*dt;
+      p.position.z+=p._vz*dt;
+      p.rotation.y+=dt*1.2;
+    } else {
+      // Embers rise and drift
+      p.position.x+=p._vx*dt;
+      p.position.y+=p._vy*dt;
+      p.position.z+=p._vz*dt;
+      p._vy*=.997; // slight deceleration
+    }
+    p._life-=dt;
+    // Fade in quickly, fade out at end
+    const progress=p._life/p._ml;
+    p.material.opacity=progress<.15
+      ? (1-progress/.15)*(p._type==='moth'?.55:.7)
+      : progress*(p._type==='moth'?.55:.7);
+    if(p._life<=0){tScene.remove(p);ambientParticles.splice(i,1)}
+  }
+}
+
+function clearAmbientParticles(){
+  ambientParticles.forEach(p=>tScene&&tScene.remove(p));
+  ambientParticles=[];
+  ambientTimer=0;
+}
+
 // ── VOID FALL ANIMATION — called from resolve ──
 function triggerOpponentVoidFall(onDone){
   voidFallState='opponent';voidFallT=0;voidLavaT=0;voidEmberTimer=0;
   voidFallState_onDone=onDone;
+  // Immediately hide opponent wall — defeat in progress
+  if(c2&&c2._owG){c2._owTy=-1.9;c2._owG.position.y=-1.9}
 }
 function triggerPlayerVoidFall(onDone){
   voidFallState='player';voidFallT=0;voidLavaT=0;voidEmberTimer=0;
@@ -1879,6 +1974,7 @@ function buildArena3(type){
   voidFallState=null;voidFallT=0;voidLavaT=0;
   if(voidLavaLight)voidLavaLight.intensity=0;
   clearVoidEmbers();
+  clearAmbientParticles();
   voidPlatL=null;voidPlatR=null;
   // Reset lava overlay
   const ov=document.getElementById('lava-overlay');
@@ -1969,8 +2065,8 @@ function resolve(pa,aa,pp){
     if(aa==='shoot') setAnim3(aBaz?'bazooka':'shoot',.45);
     if(aa==='block'){
       setAnim3('block',.5);
-      // Raise opponent block wall
-      if(c2&&c2._owG) c2._owTy=-.38;
+      // Only raise opponent wall if game is still running
+      if(c2&&c2._owG&&G.running&&G.a.hp>0) c2._owTy=-.38;
     }
     if(aa==='reload')setAnim3('reload',.55);
   }
@@ -1982,6 +2078,7 @@ function resolve(pa,aa,pp){
     p.ammo--;const dmg=pBaz?2:1;
     if(aa!=='block'||pBaz){
       a.hp=Math.max(0,a.hp-dmg);
+      if(a.hp<=0&&c2&&c2._owG){c2._owTy=-1.9;c2._owG.position.y=-1.9}
       if(curMode==='3d'){
         if(pBaz){
           // BAZOOKA HIT — full spectacle
@@ -2100,8 +2197,8 @@ function doBeat(){
   });
   const pa=G.pAct||'miss',aa=aiAct(),pp=G.pPerf;
   G.lastBeat=Date.now();G.pAct=null;G.pPerf=false;G.locked=false;
-  if(bwG) bwG._ty=-1.9;
-  if(c2&&c2._owG) c2._owTy=-1.9;
+  if(bwG){bwG._ty=-1.9}
+  if(c2&&c2._owG){c2._owTy=-1.9}
   document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
   document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
   document.getElementById('lock-txt').textContent='';
@@ -2177,6 +2274,9 @@ function _startMatch(){
     document.getElementById('hud-a').classList.add('on');
     document.getElementById('hud-c').classList.remove('on');
   }
+  // Hard-reset both walls at match start
+  if(bwG){bwG._ty=-1.9;bwG.position.y=-1.9}
+  if(c2&&c2._owG){c2._owTy=-1.9;c2._owG.position.y=-1.9}
   document.getElementById('hud-btns').classList.add('on');
   // Music + mute button
   const mb=document.getElementById('mute-btn');if(mb)mb.textContent=bgMuted?'🔇':'🔊';
