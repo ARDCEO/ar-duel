@@ -244,6 +244,80 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 /* Rank section on result screen */
 #sr-rank{margin:4px 0 18px;display:flex;flex-direction:column;align-items:center;gap:0}
 
+/* ── MULTIPLAYER SCREENS ── */
+#smp{background:rgba(5,5,13,.97);gap:10px}
+#swager{background:rgba(5,5,13,.97);gap:10px}
+#swaiting{background:rgba(5,5,13,.97);gap:12px}
+.mp-h{font-family:var(--disp);font-size:28px;letter-spacing:2px}
+.mp-s{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.mp-code{font-family:var(--disp);font-size:52px;letter-spacing:8px;color:var(--cyan);text-align:center;background:rgba(61,255,212,.06);border:.5px solid rgba(61,255,212,.2);border-radius:8px;padding:12px 24px;margin:8px 0}
+.mp-or{font-size:8px;letter-spacing:3px;color:var(--muted);text-align:center;margin:4px 0}
+.mp-input{width:100%;max-width:260px;padding:12px;border-radius:3px;border:.5px solid var(--border2);background:var(--surface);color:var(--txt);font-family:var(--mono);font-size:18px;font-weight:500;letter-spacing:6px;text-transform:uppercase;text-align:center;outline:none;margin-bottom:8px}
+.mp-input::placeholder{font-size:10px;letter-spacing:3px;opacity:.4}
+.wager-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:280px;margin:6px 0}
+.wbtn{padding:9px 16px;border-radius:3px;border:.5px solid var(--border2);background:var(--surface);color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .12s}
+.wbtn:hover,.wbtn.sel{border-color:var(--amber);color:var(--amber);background:rgba(255,210,63,.06)}
+.wager-display{font-family:var(--disp);font-size:36px;color:var(--amber);letter-spacing:2px;margin:4px 0}
+.wait-ring{width:44px;height:44px;border-radius:50%;border:2px solid rgba(61,255,212,.2);border-top-color:var(--cyan);animation:spin .8s linear infinite;margin:0 auto 8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wait-status{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-align:center}
+.wait-code{font-family:var(--disp);font-size:38px;letter-spacing:6px;color:var(--cyan);text-align:center}
+#mp-tag{position:fixed;top:8px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:2px;background:rgba(61,255,212,.12);border:.5px solid rgba(61,255,212,.3);border-radius:99px;padding:3px 10px;color:var(--cyan);z-index:25;display:none}
+#mp-tag.on{display:block}
+#wager-result{text-align:center;margin:6px 0 10px;font-size:11px;letter-spacing:2px;min-height:20px}
+.wr-win{color:var(--cyan)}.wr-lose{color:var(--red)}
+
+/* ── DC WALLET & PROFILE ── */
+#sprofile{background:rgba(5,5,13,.98);overflow-y:auto;justify-content:flex-start;padding-top:16px}
+.profile-header{width:100%;max-width:360px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px}
+.profile-close{background:none;border:.5px solid var(--border2);color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:2px;padding:6px 12px;border-radius:3px;cursor:pointer}
+.dc-card{width:100%;max-width:360px;background:linear-gradient(135deg,#0d0d22 0%,#12121f 50%,#0a1a1a 100%);border:.5px solid rgba(61,255,212,.25);border-radius:12px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.dc-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(61,255,212,.06) 0%,transparent 60%);pointer-events:none}
+.dc-label{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.dc-balance{font-family:var(--disp);font-size:52px;letter-spacing:2px;color:var(--cyan);line-height:1;display:flex;align-items:baseline;gap:8px}
+.dc-unit{font-size:16px;color:var(--muted);letter-spacing:1px}
+.dc-ticker{font-family:var(--disp);font-size:18px;letter-spacing:1px;margin-top:4px;min-height:24px}
+.dc-ticker.up{color:var(--cyan)}.dc-ticker.down{color:var(--red)}
+.dc-actions{display:flex;gap:8px;margin-top:14px}
+.dc-btn{flex:1;padding:10px 0;border-radius:4px;border:.5px solid;font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-align:center;transition:all .12s}
+.dc-btn.buy{border-color:var(--cyan);color:var(--cyan);background:rgba(61,255,212,.08)}
+.dc-btn.buy:hover{background:rgba(61,255,212,.16)}
+.dc-btn.history{border-color:var(--border2);color:var(--muted);background:transparent}
+/* Buy DC modal */
+#buy-dc-modal{position:fixed;inset:0;z-index:110;background:rgba(5,5,13,.96);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+#buy-dc-modal.on{display:flex}
+.buy-modal-inner{width:100%;max-width:340px;background:var(--surface);border:.5px solid var(--border2);border-radius:12px;padding:24px;position:relative}
+.buy-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+.pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.pack{border:.5px solid var(--border2);border-radius:6px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .12s;background:rgba(255,255,255,.02)}
+.pack:hover,.pack.sel{border-color:var(--cyan);background:rgba(61,255,212,.06)}
+.pack-dc{font-family:var(--disp);font-size:24px;color:var(--cyan);letter-spacing:1px}
+.pack-usd{font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:2px}
+.pack-tag{font-size:7px;letter-spacing:1px;color:var(--amber);margin-top:3px}
+/* DC ticker overlay (win/loss animation) */
+#dc-ticker-ov{position:fixed;left:50%;transform:translateX(-50%);top:20%;z-index:60;font-family:var(--disp);font-size:42px;letter-spacing:3px;pointer-events:none;opacity:0;text-shadow:0 0 20px currentColor;transition:opacity .3s}
+#dc-ticker-ov.show{opacity:1}
+/* Profile info card */
+.profile-card{width:100%;max-width:360px;background:var(--surface);border:.5px solid var(--border2);border-radius:8px;padding:14px;margin-bottom:10px}
+.profile-stat-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid var(--border);font-size:9px}
+.profile-stat-row:last-child{border-bottom:none}
+.psr-label{color:var(--muted);letter-spacing:1px}
+.psr-val{color:var(--txt);font-weight:500}
+/* Daily reward strip */
+.daily-row{width:100%;max-width:360px;background:var(--surface);border:.5px solid rgba(255,210,63,.2);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.daily-left{flex:1}
+.daily-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:2px}
+.daily-sub{font-size:8px;color:var(--muted)}
+.daily-btn{padding:8px 14px;border-radius:3px;border:.5px solid var(--amber);background:rgba(255,210,63,.08);color:var(--amber);font-family:var(--mono);font-size:9px;letter-spacing:1px;cursor:pointer;white-space:nowrap}
+.daily-btn:disabled{opacity:.35;cursor:default}
+/* Transaction history */
+.tx-list{width:100%;max-width:360px}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:.5px solid var(--border);font-size:9px}
+.tx-item:first-child{border-top:.5px solid var(--border)}
+.tx-desc{color:var(--muted);flex:1}
+.tx-amt{font-family:var(--disp);font-size:14px;letter-spacing:1px}
+.tx-amt.pos{color:var(--cyan)}.tx-amt.neg{color:var(--red)}
+
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TQPBY9KWDL"></script>
@@ -369,6 +443,156 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 </div>
 
+<!-- MULTIPLAYER TAG (live PvP indicator) -->
+<div id="mp-tag">⚡ LIVE PvP</div>
+
+<!-- DC TICKER OVERLAY (win/loss animation) -->
+<div id="dc-ticker-ov"></div>
+
+<!-- BUY DC MODAL -->
+<div id="buy-dc-modal">
+  <div class="buy-modal-inner">
+    <button class="buy-close" onclick="closeBuyDC()">✕</button>
+    <div style="font-family:var(--disp);font-size:22px;letter-spacing:2px;color:var(--cyan);margin-bottom:4px">BUY DUEL CREDITS</div>
+    <div style="font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:4px">USD → DC · INSTANT · NO SUBSCRIPTION</div>
+    <div class="pack-grid">
+      <div class="pack" onclick="selectPack(this,500,4.99)">
+        <div class="pack-dc">500</div>
+        <div class="pack-usd">$4.99</div>
+        <div class="pack-tag">STARTER</div>
+      </div>
+      <div class="pack" onclick="selectPack(this,1200,9.99)">
+        <div class="pack-dc">1,200</div>
+        <div class="pack-usd">$9.99</div>
+        <div class="pack-tag">+20% BONUS</div>
+      </div>
+      <div class="pack" onclick="selectPack(this,3000,19.99)">
+        <div class="pack-dc">3,000</div>
+        <div class="pack-usd">$19.99</div>
+        <div class="pack-tag">+50% BONUS</div>
+      </div>
+      <div class="pack" onclick="selectPack(this,8000,39.99)">
+        <div class="pack-dc">8,000</div>
+        <div class="pack-usd">$39.99</div>
+        <div class="pack-tag">🔥 BEST VALUE</div>
+      </div>
+    </div>
+    <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-align:center;margin-bottom:14px;line-height:1.8">
+      DC used for: Wager PvP · Season Pass · Cosmetics<br>
+      Minimum wager entry: <b style="color:var(--amber)">500 DC</b>
+    </div>
+    <button id="buy-confirm-btn" class="btn prim" style="opacity:.4;pointer-events:none" onclick="buyDC()">SELECT A PACK</button>
+    <div style="text-align:center;margin-top:10px">
+      <span style="font-size:8px;color:var(--muted);letter-spacing:1px">Also accepts </span>
+      <span style="font-size:9px;color:var(--txt)">◎ Solana</span>
+      <span style="font-size:8px;color:var(--muted);letter-spacing:1px"> — wallet connect coming soon</span>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER PROFILE / DC WALLET -->
+<div id="sprofile" class="screen">
+  <div class="profile-header">
+    <div style="font-family:var(--disp);font-size:24px;letter-spacing:2px;color:var(--cyan)">MY PROFILE</div>
+    <button class="profile-close" onclick="show('st')">✕ CLOSE</button>
+  </div>
+
+  <!-- DC Balance Card -->
+  <div class="dc-card">
+    <div class="dc-label">DUEL CREDITS BALANCE</div>
+    <div class="dc-balance">
+      <span id="profile-dc-display">0</span>
+      <span class="dc-unit">DC</span>
+    </div>
+    <div class="dc-ticker" id="profile-dc-ticker"></div>
+    <div class="dc-actions">
+      <button class="dc-btn buy" onclick="openBuyDC()">＋ BUY DC</button>
+      <button class="dc-btn history" onclick="toggleTxHistory()">HISTORY</button>
+    </div>
+  </div>
+
+  <!-- Daily Login Reward -->
+  <div class="daily-row" id="daily-reward-row" style="display:none">
+    <div class="daily-left">
+      <div class="daily-title">🎁 DAILY REWARD</div>
+      <div class="daily-sub" id="daily-sub-text">Claim your daily DC bonus</div>
+    </div>
+    <button class="daily-btn" id="daily-claim-btn" onclick="claimDailyReward()">CLAIM</button>
+  </div>
+
+  <!-- Rank + Stats -->
+  <div class="profile-card">
+    <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px">STATS</div>
+    <div class="profile-stat-row"><span class="psr-label">RANK</span><span class="psr-val" id="psr-rank">—</span></div>
+    <div class="profile-stat-row"><span class="psr-label">WINS</span><span class="psr-val" id="psr-wins">0</span></div>
+    <div class="profile-stat-row"><span class="psr-label">LOSSES</span><span class="psr-val" id="psr-losses">0</span></div>
+    <div class="profile-stat-row"><span class="psr-label">WIN RATE</span><span class="psr-val" id="psr-wr">—</span></div>
+    <div class="profile-stat-row"><span class="psr-label">TOTAL MATCHES</span><span class="psr-val" id="psr-total">0</span></div>
+    <div class="profile-stat-row"><span class="psr-label">DC WAGERED</span><span class="psr-val" id="psr-wagered">0 DC</span></div>
+    <div class="profile-stat-row"><span class="psr-label">DC WON</span><span class="psr-val" id="psr-won" style="color:var(--cyan)">0 DC</span></div>
+  </div>
+
+  <!-- Wager Access Info -->
+  <div class="profile-card" style="border-color:rgba(255,210,63,.2)">
+    <div style="font-size:8px;letter-spacing:3px;color:var(--amber);text-transform:uppercase;margin-bottom:8px">⚡ WAGER PvP ACCESS</div>
+    <div class="profile-stat-row"><span class="psr-label">STATUS</span><span id="wager-access-status" class="psr-val" style="color:var(--amber)">COMING SOON</span></div>
+    <div class="profile-stat-row"><span class="psr-label">MIN BALANCE</span><span class="psr-val">500 DC</span></div>
+    <div class="profile-stat-row"><span class="psr-label">PLATFORM RAKE</span><span class="psr-val">10% of wager</span></div>
+    <div class="profile-stat-row"><span class="psr-label">ELIGIBLE RANKS</span><span class="psr-val">DUELIST +</span></div>
+  </div>
+
+  <!-- TX History (hidden by default) -->
+  <div id="tx-history" style="display:none;width:100%;max-width:360px">
+    <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:8px 0 4px;padding:0 2px">TRANSACTION HISTORY</div>
+    <div class="tx-list" id="tx-list"></div>
+  </div>
+
+  <div style="height:30px"></div>
+</div>
+
+<!-- MULTIPLAYER LOBBY -->
+<div id="smp" class="screen">
+  <div class="mp-h">MULTIPLAYER</div>
+  <div class="mp-s">REAL PvP — CHALLENGE A PLAYER</div>
+  <button class="btn prim" onclick="mpCreate()">CREATE ROOM</button>
+  <div class="mp-or">— OR —</div>
+  <input class="mp-input" id="mp-join-code" maxlength="4" placeholder="ENTER CODE" oninput="this.value=this.value.toUpperCase()">
+  <button class="btn" style="border-color:var(--cyan);color:var(--cyan)" onclick="mpJoin()">JOIN ROOM →</button>
+  <div id="mp-err" style="font-size:9px;color:var(--red);letter-spacing:2px;min-height:14px;margin-top:2px"></div>
+  <button class="btn ghost" onclick="show('st')">← BACK</button>
+</div>
+
+<!-- WAGER SELECT — COMING SOON -->
+<div id="swager" class="screen">
+  <div style="font-size:9px;letter-spacing:4px;color:var(--amber);text-transform:uppercase;margin-bottom:8px">COMING SOON</div>
+  <div class="mp-h" style="color:var(--amber)">DC WAGER PvP</div>
+  <div class="mp-s">DUEL CREDITS SYSTEM LAUNCHING SOON</div>
+  <div style="background:var(--surface);border:.5px solid rgba(255,210,63,.2);border-radius:8px;padding:20px;max-width:280px;text-align:center;margin-bottom:16px">
+    <div style="font-size:28px;margin-bottom:10px">🪙</div>
+    <div style="font-size:10px;color:var(--txt);line-height:1.9;letter-spacing:1px">
+      <b style="color:var(--amber)">Duel Credits (DC)</b> are AR Duel's in-game currency.<br>
+      Buy DC with <b style="color:var(--txt)">USD via card</b> or <b style="color:var(--txt)">Solana wallet</b>.<br>
+      Wager DC on real PvP matches — winner takes all.<br>
+      Minimum wager entry: <b style="color:var(--amber)">500 DC</b>.
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:.5px solid var(--border)">
+      <div style="font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:6px">EARN FREE DC</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.8">Daily login rewards · Season Pass · Founder Pack</div>
+    </div>
+  </div>
+  <button class="btn prim" onclick="mpConfirmWager()">PLAY FREE MATCH →</button>
+  <button class="btn ghost" onclick="show('smp')">← BACK</button>
+</div>
+
+<!-- WAITING FOR OPPONENT -->
+<div id="swaiting" class="screen">
+  <div class="wait-ring"></div>
+  <div class="wait-status" id="wait-status">WAITING FOR OPPONENT</div>
+  <div class="wait-code" id="wait-code"></div>
+  <div style="font-size:8px;color:var(--muted);letter-spacing:2px;text-align:center;margin-top:4px" id="wait-sub">Share this code with your opponent</div>
+  <button class="btn ghost" style="margin-top:18px" onclick="mpCancel()">CANCEL</button>
+</div>
+
 <!-- RESULT -->
 <div id="sr" class="screen">
   <div class="rt" id="rtitle">VICTORY</div>
@@ -377,6 +601,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="si"><div class="sv" id="stat-w">0</div><div class="sl2">WINS</div></div>
     <div class="si"><div class="sv" id="stat-l">0</div><div class="sl2">LOSSES</div></div>
   </div>
+  <div id="wager-result"></div>
   <div id="sr-rank"></div>
   <button class="btn prim" onclick="goPlay()">PLAY AGAIN</button>
   <button class="btn ghost" onclick="backToMenu()">MENU</button>
@@ -405,6 +630,369 @@ let threeOk  = false;
 function saveState(){
   localStorage.setItem('arduel_wins',  gWins);
   localStorage.setItem('arduel_losses',gLosses);
+}
+
+// ══════════════════════════════════════════════
+// SUPABASE + MULTIPLAYER
+// ══════════════════════════════════════════════
+const SB_URL='https://dasltyjqkqapbgdaxhgt.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhc2x0eWpxa3FhcGJnZGF4aGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjI0NTMsImV4cCI6MjA5MDczODQ1M30.UJ9r_xOM6w7F-JyPLqzjQ-wNv0yaDp7pFz1ari8laaE';
+
+// Anonymous player ID — persists per browser session
+const playerId = localStorage.getItem('arduel_pid') || (()=>{
+  const id='p_'+Math.random().toString(36).slice(2,10);
+  localStorage.setItem('arduel_pid',id);return id;
+})();
+
+// MP state
+let mpRoom=null;       // current room object
+let mpRole=null;       // 'host' or 'guest'
+let mpChannel=null;    // Supabase realtime channel
+let mpWager=0;         // selected wager DC
+let mpBeatTimer=null;  // host-side beat interval
+let mpResolved=false;  // prevent double-resolve per beat
+
+// ── DB helpers ──
+async function sbGet(code){
+  const r=await fetch(`${SB_URL}/rest/v1/rooms?code=eq.${code}&select=*`,{
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+  const d=await r.json();
+  return d[0]||null;
+}
+async function sbInsert(data){
+  const r=await fetch(`${SB_URL}/rest/v1/rooms`,{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
+      'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify(data)
+  });
+  const d=await r.json();
+  return d[0]||null;
+}
+async function sbUpdate(code,data){
+  await fetch(`${SB_URL}/rest/v1/rooms?code=eq.${code}`,{
+    method:'PATCH',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  });
+}
+async function sbDelete(code){
+  await fetch(`${SB_URL}/rest/v1/rooms?code=eq.${code}`,{
+    method:'DELETE',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+  });
+}
+
+// Supabase Realtime via WebSocket
+function sbSubscribe(code, onUpdate){
+  const wsUrl=SB_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SB_KEY+'&vsn=1.0.0';
+  const ws=new WebSocket(wsUrl);
+  const topic=`realtime:public:rooms:code=eq.${code}`;
+  ws.onopen=()=>{
+    ws.send(JSON.stringify({topic:'realtime:public',event:'phx_join',payload:{},ref:'1'}));
+    ws.send(JSON.stringify({topic,event:'phx_join',payload:{config:{broadcast:{self:true},presence:{key:''},postgres_changes:[{event:'UPDATE',schema:'public',table:'rooms',filter:`code=eq.${code}`}]}},ref:'2'}));
+  };
+  ws.onmessage=(e)=>{
+    const msg=JSON.parse(e.data);
+    if(msg.event==='postgres_changes'&&msg.payload?.data?.record){
+      onUpdate(msg.payload.data.record);
+    }
+  };
+  ws.onerror=()=>console.warn('WS error');
+  return ws;
+}
+
+// ── ROOM CODE GENERATOR ──
+function genCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+
+// ── WAGER SELECTION ──
+function setWager(amt){
+  mpWager=amt;
+  document.getElementById('wager-amt').textContent=amt===0?'FREE MATCH':amt+' DC';
+  document.querySelectorAll('.wbtn').forEach(b=>b.classList.toggle('sel',parseInt(b.textContent)===amt||(amt===0&&b.textContent==='FREE')));
+}
+
+// ── CREATE ROOM ──
+async function mpCreate(){
+  mpWager=0;
+  show('swager');
+}
+
+async function mpConfirmWager(){
+  const code=genCode();
+  const room=await sbInsert({
+    code,host_id:playerId,status:'waiting',
+    map:cMap,wager:mpWager,
+    host_hp:3,guest_hp:3,
+    host_ammo:0,guest_ammo:0,
+    host_action:null,guest_action:null,
+    host_cr:0,guest_cr:0,host_vm:0,guest_vm:0,
+    beat:0,winner:null
+  });
+  if(!room){document.getElementById('mp-err').textContent='CONNECTION ERROR';return}
+  mpRoom=room;mpRole='host';
+  document.getElementById('wait-code').textContent=code;
+  document.getElementById('wait-status').textContent='WAITING FOR OPPONENT';
+  document.getElementById('wait-sub').textContent='Share this code with your opponent';
+  show('swaiting');
+  // Subscribe — host starts match when guest joins
+  mpChannel=sbSubscribe(code,(updated)=>{
+    if(updated.status==='playing'&&mpRole==='host'){
+      mpRoom=updated;
+      mpStartMatch();
+    }
+  });
+}
+
+// ── JOIN ROOM ──
+async function mpJoin(){
+  const code=document.getElementById('mp-join-code').value.trim();
+  if(code.length!==4){document.getElementById('mp-err').textContent='ENTER A 4-DIGIT CODE';return}
+  document.getElementById('mp-err').textContent='';
+  const room=await sbGet(code);
+  if(!room){document.getElementById('mp-err').textContent='ROOM NOT FOUND';return}
+  if(room.status!=='waiting'){document.getElementById('mp-err').textContent='ROOM ALREADY STARTED';return}
+  if(room.host_id===playerId){document.getElementById('mp-err').textContent='CANNOT JOIN OWN ROOM';return}
+  mpRoom=room;mpRole='guest';mpWager=room.wager;
+  // Update room to playing
+  await sbUpdate(code,{guest_id:playerId,status:'playing'});
+  mpRoom={...mpRoom,guest_id:playerId,status:'playing'};
+  document.getElementById('wait-code').textContent=code;
+  document.getElementById('wait-status').textContent='CONNECTED!';
+  document.getElementById('wait-sub').textContent='Connected! Starting match...';
+  show('swaiting');
+  // Subscribe for updates
+  mpChannel=sbSubscribe(code,(updated)=>{mpRoom=updated;mpOnUpdate(updated)});
+  setTimeout(()=>mpStartMatch(),800);
+}
+
+// ── CANCEL ──
+async function mpCancel(){
+  if(mpRoom){await sbDelete(mpRoom.code)}
+  if(mpChannel){try{mpChannel.close()}catch(e){}}
+  mpRoom=null;mpRole=null;mpChannel=null;
+  show('smp');
+}
+
+// ── START MULTIPLAYER MATCH ──
+function mpStartMatch(){
+  curMode='mp';
+  // Reset G for MP
+  G.p={hp:3,ammo:0,cr:0,vm:0};
+  G.a={hp:3,ammo:0,cr:0,vm:0};
+  G._oppMaxHp=3;
+  G.beat=0;G.pAct=null;G.pPerf=false;G.locked=false;G.running=true;
+  mpResolved=false;
+  // Show classic HUD for MP (2D view)
+  show('');
+  document.getElementById('hud-c').classList.add('on');
+  document.getElementById('hud-a').classList.remove('on');
+  document.getElementById('hud-btns').classList.add('on');
+  document.getElementById('mp-tag').classList.add('on');
+  const mb=document.getElementById('mute-btn');if(mb)mb.textContent=bgMuted?'🔇':'🔊';
+  bgPlay('hallway');
+  renderG();
+  document.getElementById('lock-txt').textContent='';
+  const rb=rankBadgeInline(gWins);
+  const cRB=document.getElementById('c-rank-badge');if(cRB)cRB.innerHTML=rb;
+  document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
+  document.getElementById('a-shoot').classList.add('dis');
+  applyRingSkin(COSMETICS.ringSkin);
+  // Wager display in sub
+  startTBar();
+  startTBar();
+  // HOST drives the beat timer
+  if(mpRole==='host'){
+    G._bi=setInterval(mpHostBeat,G.beatMs);
+  }
+  // Both sides listen for DB updates
+  if(mpRole==='guest'&&mpChannel){
+    // already subscribed
+  }
+}
+
+// ── HOST BEAT DRIVER ──
+async function mpHostBeat(){
+  if(!G.running)return;
+  G.beat++;sfx.beat();
+  ['c-','a-'].forEach(p=>{
+    const bn=document.getElementById(p+'bnum');if(bn)bn.textContent=G.beat;
+    const r=document.getElementById(p+'ring');if(r){r.classList.add('pulse');setTimeout(()=>r.classList.remove('pulse'),165)}
+  });
+  if(bwG) bwG._ty=-1.9;
+  document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
+  document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
+  document.getElementById('lock-txt').textContent='';
+  // Get actions from DB then resolve
+  mpResolved=false;
+  const room=await sbGet(mpRoom.code);
+  if(!room){return}
+  const hostAct=room.host_action||'miss';
+  const guestAct=room.guest_action||'miss';
+  // Clear actions in DB
+  await sbUpdate(mpRoom.code,{
+    host_action:null,guest_action:null,beat:G.beat
+  });
+  // Resolve from perspective of each role
+  const myAct   = mpRole==='host'?hostAct:guestAct;
+  const oppAct  = mpRole==='host'?guestAct:hostAct;
+  G.pAct=myAct;
+  mpResolve(myAct,oppAct);
+}
+
+// ── GUEST BEAT HANDLER — listens for DB beat increment ──
+function mpOnUpdate(room){
+  if(curMode!=='mp'||!G.running)return;
+  if(mpRole==='guest'&&room.beat>G.beat){
+    G.beat=room.beat;
+    sfx.beat();
+    ['c-','a-'].forEach(p=>{
+      const bn=document.getElementById(p+'bnum');if(bn)bn.textContent=G.beat;
+      const r=document.getElementById(p+'ring');if(r){r.classList.add('pulse');setTimeout(()=>r.classList.remove('pulse'),165)}
+    });
+    if(bwG) bwG._ty=-1.9;
+    document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('sel','dis'));
+    document.getElementById('a-shoot').classList.toggle('dis',G.p.ammo<=0);
+    document.getElementById('lock-txt').textContent='';
+    // Derive what happened
+    const myAct  = room.guest_action||'miss';
+    const oppAct = room.host_action||'miss';
+    G.pAct=myAct;
+    mpResolve(myAct,oppAct);
+  }
+  // Check for winner set by host
+  if(room.winner&&G.running){
+    G.running=false;
+    mpEndMatch(room.winner);
+  }
+}
+
+// ── SUBMIT PLAYER ACTION ──
+async function act(a){
+  au();if(G.locked||!G.running)return;if(a==='shoot'&&G.p.ammo<=0)return;
+  G.pAct=a;G.locked=true;
+  const pct=(Date.now()-G.lastBeat)/G.beatMs;G.pPerf=pct>=.75;
+  document.querySelectorAll('.abtn').forEach(b=>{b.classList.remove('sel');b.classList.add('dis')});
+  const ids={reload:'a-reload',shoot:'a-shoot',block:'a-block'};
+  document.getElementById(ids[a]).classList.add('sel');
+  document.getElementById(ids[a]).classList.remove('dis');
+  document.getElementById('lock-txt').textContent=G.pPerf?'⚡ PERFECT TIMING':'LOCKED IN';
+  if(G.pPerf)sfx.perf();
+  if(a==='block'&&curMode==='3d'&&bwG) bwG._ty=-.38;
+  // In MP mode, write action to DB
+  if(curMode==='mp'&&mpRoom){
+    const field=mpRole==='host'?'host_action':'guest_action';
+    await sbUpdate(mpRoom.code,{[field]:a});
+  }
+}
+
+// ── MP RESOLVE (mirrors resolve() but for PvP) ──
+function mpResolve(pa,aa){
+  if(!G.running)return;
+  const p=G.p,a=G.a;
+  const pBaz=p.cr>=3&&pa==='shoot';
+  const aBaz=a.cr>=3&&aa==='shoot';
+
+  // Miss tracking (Void Lane not in MP classic for now)
+  p.cr=pa==='reload'?p.cr+1:0;a.cr=aa==='reload'?a.cr+1:0;
+  if(pa==='reload'){p.ammo=Math.min(3,p.ammo+(G.pPerf?2:1));sfx.rld()}
+  if(aa==='reload') a.ammo=Math.min(3,a.ammo+1);
+
+  let msg='',mcls='';
+
+  // Player shoots opponent
+  if(pa==='shoot'&&p.ammo>0){
+    p.ammo--;const dmg=pBaz?2:1;
+    if(aa!=='block'||pBaz){
+      a.hp=Math.max(0,a.hp-dmg);
+      showHM('en',dmg,pBaz);msg=pBaz?'BAZOOKA!':'HIT!';mcls=pBaz?'rf-baz':'rf-hit';
+      pBaz?sfx.baz():sfx.hit();
+    } else {showRF('BLOCKED!','rf-blk');sfx.block()}
+  }
+
+  // Opponent shoots player
+  if(aa==='shoot'&&a.ammo>0){
+    a.ammo--;const dmg=aBaz?2:1;
+    if(pa!=='block'||aBaz){
+      p.hp=Math.max(0,p.hp-dmg);
+      showHM('pl',dmg,aBaz);dmgFl();
+      if(!msg){msg=aBaz?'BAZOOKA!':'HIT!';mcls=aBaz?'rf-baz':'rf-hit'}
+      aBaz?sfx.baz():sfx.hit();
+    } else {
+      if(!msg){showRF('BLOCKED!','rf-blk');sfx.block()}
+    }
+  }
+
+  if(msg)showRF(msg,mcls);
+  renderG();
+
+  // Check win
+  const over=p.hp<=0||a.hp<=0||G.beat>=G.maxBeats;
+  if(over){
+    G.running=false;
+    clearInterval(G._bi);
+    const tied=p.hp===a.hp;
+    let winner='draw';
+    if(!tied){winner=a.hp<=0?'player':'opponent'}
+    // Host writes winner to DB
+    if(mpRole==='host'){
+      sbUpdate(mpRoom.code,{winner,host_hp:p.hp,guest_hp:a.hp});
+    }
+    setTimeout(()=>mpEndMatch(winner),400);
+  }
+}
+
+// ── MP END MATCH ──
+function mpEndMatch(winner){
+  if(!G.running&&winner!=='draw'&&winner!=='player'&&winner!=='opponent')return;
+  G.running=false;
+  clearInterval(G._bi);
+  document.getElementById('mp-tag').classList.remove('on');
+
+  // From this player's perspective
+  const iWon=(mpRole==='host'&&winner==='player')||(mpRole==='guest'&&winner==='opponent');
+  const tied=winner==='draw';
+
+  if(!tied){if(iWon)gWins++;else gLosses++;}
+  saveState();
+  if(iWon&&!tied){checkRankUp(gWins-1,gWins);checkCosmeticUnlocks(gWins);}
+
+  document.getElementById('stat-w').textContent=gWins;
+  document.getElementById('stat-l').textContent=gLosses;
+  document.getElementById('sr-rank').innerHTML=rankBadgeHTML(gWins)+spProgressHTML();
+
+  const t=document.getElementById('rtitle'),s=document.getElementById('rsub');
+  if(tied){t.textContent='DRAW';t.className='rt draw';s.textContent='BOTH SURVIVE';sfx.block()}
+  else if(iWon){t.textContent='VICTORY';t.className='rt win';s.textContent='OPPONENT ELIMINATED';sfx.win()}
+  else{t.textContent='ELIMINATED';t.className='rt lose';s.textContent='BETTER LUCK NEXT MATCH';sfx.lose()}
+
+  // Award/deduct DC with ticker animation
+  setTimeout(()=>awardMatchDC(iWon,tied,mpWager),600);
+
+  // Wager result display
+  const wr=document.getElementById('wager-result');
+  if(mpWager>0&&wr){
+    const rake=Math.floor(mpWager*.1);
+    const payout=mpWager*2-rake*2;
+    if(tied) wr.innerHTML=`<span class="wr-lose">DRAW — NO WAGER PAID OUT</span>`;
+    else if(iWon) wr.innerHTML=`<span class="wr-win">+${payout} DC WON 🏆</span>`;
+    else wr.innerHTML=`<span class="wr-lose">-${mpWager} DC LOST</span>`;
+  } else if(wr) wr.innerHTML='';
+
+  bgStop();
+  document.getElementById('hud-c').classList.remove('on');
+  document.getElementById('hud-a').classList.remove('on');
+  document.getElementById('hud-btns').classList.remove('on');
+  show('sr');
+
+  // Clean up room
+  if(mpChannel){try{mpChannel.close()}catch(e){}}
+  setTimeout(()=>{if(mpRoom)sbDelete(mpRoom.code)},3000);
+  mpRoom=null;mpRole=null;mpChannel=null;
 }
 
 // ══════════════════════════════════════════════
@@ -544,14 +1132,18 @@ function spProgressHTML(){
 function renderTitle(){
   const c=document.getElementById('play-btns');
   c.innerHTML=`
-    <div style="margin-bottom:12px">${rankBadgeInline(gWins)}</div>
+    <div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;justify-content:center">
+      ${rankBadgeInline(gWins)}
+      <span onclick="openProfile()" style="cursor:pointer;font-size:9px;letter-spacing:1px;color:var(--amber);border:.5px solid rgba(255,210,63,.3);border-radius:99px;padding:3px 10px;background:rgba(255,210,63,.06)">${dcBalance()} DC 🪙</span>
+    </div>
     <div class="mode-lbl">SELECT MODE</div>
     <div class="mode-row">
       <button class="btn prim" style="flex:1;margin-bottom:0" onclick="startGame('2d')">CLASSIC</button>
       <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
     </div>
-    <div style="height:8px"></div>`;
-  // Apply active cosmetics
+    <div style="height:6px"></div>
+    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">⚡ MULTIPLAYER PvP</button>
+    <div style="height:4px"></div>`;
   applyRingSkin(COSMETICS.ringSkin);
 }
 
@@ -1454,6 +2046,9 @@ function endMatch(){
   else if(won){t.textContent='VICTORY';t.className='rt win';s.textContent='OPPONENT ELIMINATED';sfx.win()}
   else{t.textContent='ELIMINATED';t.className='rt lose';s.textContent='BETTER LUCK NEXT MATCH';sfx.lose()}
 
+  // Award DC for vs-AI win (small amount)
+  setTimeout(()=>awardMatchDC(won,tied,0),600);
+
   // Void Lane: play fall animation before showing result screen
   if(curMode==='3d'&&cMap==='platform'&&!tied){
     if(won){
@@ -1484,8 +2079,8 @@ function showResultScreen(){
 // BEAT SYSTEM
 // ══════════════════════════════════════════════
 function doBeat(){
+  if(curMode==='mp')return; // MP uses its own beat driver
   G.beat++;sfx.beat();
-  // Pulse both rings, update both beat counters
   ['c-','a-'].forEach(p=>{
     const bn=document.getElementById(p+'bnum');if(bn)bn.textContent=G.beat;
     const r=document.getElementById(p+'ring');if(r){r.classList.add('pulse');setTimeout(()=>r.classList.remove('pulse'),165)}
@@ -1506,19 +2101,6 @@ function startTBar(){
     ['c-','a-'].forEach(p=>{const b=document.getElementById(p+'tbar');if(b){b.style.width=pct+'%';b.classList.toggle('perf',pct>=75)}});
   },32);
 }
-function act(a){
-  au();if(G.locked||!G.running)return;if(a==='shoot'&&G.p.ammo<=0)return;
-  G.pAct=a;G.locked=true;
-  const pct=(Date.now()-G.lastBeat)/G.beatMs;G.pPerf=pct>=.75;
-  document.querySelectorAll('.abtn').forEach(b=>{b.classList.remove('sel');b.classList.add('dis')});
-  const ids={reload:'a-reload',shoot:'a-shoot',block:'a-block'};
-  document.getElementById(ids[a]).classList.add('sel');document.getElementById(ids[a]).classList.remove('dis');
-  document.getElementById('lock-txt').textContent=G.pPerf?'⚡ PERFECT TIMING':'LOCKED IN';
-  if(G.pPerf)sfx.perf();
-  // Block wall feedback (Arena Mode 3D only)
-  if(a==='block'&&curMode==='3d'&&bwG) bwG._ty=-.38;
-}
-
 // ══════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════
@@ -1528,6 +2110,7 @@ function selMap(m){cMap=m;document.querySelectorAll('.mcard').forEach(c=>c.class
 function startGame(mode){
   au();curMode=mode;
   if(mode==='3d') show('sm');
+  else if(mode==='mp') show('smp');
   else startCD();
 }
 
@@ -1594,11 +2177,301 @@ function _startMatch(){
   startTBar();G._bi=setInterval(doBeat,G.beatMs);
 }
 
-function goPlay(){if(curMode==='3d')show('sm');else startCD()}
-function backToMenu(){show('st');renderTitle()}
+function goPlay(){
+  if(curMode==='3d') show('sm');
+  else if(curMode==='mp') show('smp');
+  else startCD();
+}
+function backToMenu(){
+  // Clean up MP if leaving mid-session
+  if(mpRoom){sbDelete(mpRoom.code);if(mpChannel){try{mpChannel.close()}catch(e){}}}
+  mpRoom=null;mpRole=null;mpChannel=null;
+  document.getElementById('mp-tag').classList.remove('on');
+  show('st');renderTitle();
+}
 
 function howTo(){
-  alert('AR DUEL — HOW TO PLAY\n\nEach beat (~1 sec), choose ONE action:\n\n🔄 RELOAD — +1 ammo (max 3)\n🔫 SHOOT  — spend 1 ammo, deal 1 damage\n🛡️ BLOCK  — raise your wall / deflect incoming shot\n\n3 HP each. First to 0 loses.\n\n⚡ BAZOOKA: Reload 3 times in a row →\n   next Shoot is UNBLOCKABLE + 2 damage!\n\n⭐ PERFECT TIMING (last 25% of beat):\n   Reload → +2 ammo bonus\n   Block  → guaranteed deflect\n\n🌌 VOID LANE (Arena Mode only):\n   Miss 3 beats in a row → fall off instantly!')
+  // Build overlay if not exists
+  let ov=document.getElementById('howto-ov');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='howto-ov';
+    ov.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(5,5,13,.97);overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 20px 40px;font-family:var(--mono)';
+    ov.innerHTML=`
+<div style="width:100%;max-width:380px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div style="font-family:var(--disp);font-size:32px;letter-spacing:3px;color:var(--cyan)">HOW TO PLAY</div>
+    <button onclick="document.getElementById('howto-ov').remove()" style="background:none;border:.5px solid rgba(255,255,255,.15);color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:6px 12px;border-radius:3px;cursor:pointer">CLOSE ✕</button>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">THE BASICS</div>
+  <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:16px;margin-bottom:14px;line-height:2">
+    <div style="font-size:10px;color:var(--txt)">Each beat (~1 second), choose <b style="color:var(--cyan)">ONE action</b>.</div>
+    <div style="font-size:10px;color:var(--txt)">Both players act simultaneously — nobody sees the other's move first.</div>
+    <div style="font-size:10px;color:var(--txt)">First to <b style="color:var(--red)">reduce opponent to 0 HP</b> wins. Both start at <b style="color:var(--cyan)">3 HP</b>.</div>
+    <div style="font-size:10px;color:var(--txt)">Max <b style="color:var(--muted)">28 beats</b> per match — most HP wins at time.</div>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">THE THREE MOVES</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+    <div style="background:var(--surface);border:.5px solid rgba(61,255,212,.2);border-radius:6px;padding:12px 14px">
+      <div style="font-size:12px;color:var(--cyan);font-weight:500;margin-bottom:3px">🔄 RELOAD</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Adds +1 ammo (max 3). No ammo = can't shoot.<br>3 reloads in a row charges the <b style="color:var(--amber)">BAZOOKA</b>.</div>
+    </div>
+    <div style="background:var(--surface);border:.5px solid rgba(255,64,64,.2);border-radius:6px;padding:12px 14px">
+      <div style="font-size:12px;color:var(--red);font-weight:500;margin-bottom:3px">🔫 SHOOT</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Spends 1 ammo, deals <b style="color:var(--txt)">1 damage</b>. Blocked by BLOCK.<br>Resets your reload streak.</div>
+    </div>
+    <div style="background:var(--surface);border:.5px solid rgba(255,255,255,.12);border-radius:6px;padding:12px 14px">
+      <div style="font-size:12px;color:var(--txt);font-weight:500;margin-bottom:3px">🛡️ BLOCK</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Raises your wall — deflects incoming shots completely.<br>Costs no ammo. Wall rises visually in Arena Mode.</div>
+    </div>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">SPECIAL MECHANICS</div>
+  <div style="background:var(--surface);border:.5px solid rgba(255,210,63,.2);border-radius:6px;padding:14px;margin-bottom:10px">
+    <div style="font-size:11px;color:var(--amber);font-weight:500;margin-bottom:6px">⚡ BAZOOKA</div>
+    <div style="font-size:9px;color:var(--muted);line-height:1.8">Reload <b style="color:var(--txt)">3 times in a row</b> without shooting → your next SHOOT becomes a Bazooka.<br>Bazooka deals <b style="color:var(--txt)">2 damage</b> and is <b style="color:var(--red)">completely unblockable</b>.<br>Camera weapon swaps to the Bazooka in Arena Mode.<br>Fires automatically on your next SHOOT — then resets.</div>
+  </div>
+  <div style="background:var(--surface);border:.5px solid rgba(61,255,212,.15);border-radius:6px;padding:14px;margin-bottom:10px">
+    <div style="font-size:11px;color:var(--cyan);font-weight:500;margin-bottom:6px">⭐ PERFECT TIMING</div>
+    <div style="font-size:9px;color:var(--muted);line-height:1.8">Act in the <b style="color:var(--txt)">last 25%</b> of a beat — the timing bar turns amber — for a bonus.<br>🔄 RELOAD with perfect timing → <b style="color:var(--txt)">+2 ammo</b> instead of +1.<br>The beat ring flashes — this is the window. Master it to win faster.</div>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">GAME MODES</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+    <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:12px 14px">
+      <div style="font-size:11px;color:var(--txt);font-weight:500;margin-bottom:3px">CLASSIC MODE</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Pure card UI vs AI. No environment. Focus on pure mechanics. Good for learning and quick sessions.</div>
+    </div>
+    <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:12px 14px">
+      <div style="font-size:11px;color:var(--txt);font-weight:500;margin-bottom:3px">ARENA MODE — HALLWAY</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">First-person 3D view. Enclosed — no fall hazard. Full particle effects, camera shake, block walls visible for both players.</div>
+    </div>
+    <div style="background:var(--surface);border:.5px solid rgba(255,64,64,.2);border-radius:6px;padding:12px 14px">
+      <div style="font-size:11px;color:var(--red);font-weight:500;margin-bottom:3px">ARENA MODE — VOID LANE ☠️</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Floating platform above a lava void. <b style="color:var(--red)">Miss 3 beats in a row</b> → platform splits open, you fall. Lava erupts below.<br>Every defeat ends with a fall animation. Most clippable mode.</div>
+    </div>
+    <div style="background:var(--surface);border:.5px solid rgba(61,255,212,.3);border-radius:6px;padding:12px 14px">
+      <div style="font-size:11px;color:var(--cyan);font-weight:500;margin-bottom:3px">⚡ MULTIPLAYER PvP</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7">Real-time 1v1 vs another player. Create a room → share the 4-digit code → opponent enters code → match starts.<br>Wager DC on real PvP matches — <b style="color:var(--amber)">coming soon</b>. Free matches available now.</div>
+    </div>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">RANK SYSTEM</div>
+  <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:14px;margin-bottom:14px">
+    <div style="font-size:9px;color:var(--muted);line-height:1.9">
+      ▪ <b style="color:#8a8a9a">ROOKIE</b> — 0 wins &nbsp;|&nbsp; 🔵 <b style="color:#3dffd4">DUELIST</b> — 5 wins<br>
+      🟡 <b style="color:#ffd23f">SHARPSHOOTER</b> — 15 wins &nbsp;|&nbsp; 🔷 <b style="color:#4db8ff">VETERAN</b> — 35 wins<br>
+      🔶 <b style="color:#ff6b35">ELITE</b> — 75 wins &nbsp;|&nbsp; 💜 <b style="color:#cc44ff">CHAMPION</b> — 150 wins<br>
+      ⭐ <b style="color:#ffd700">LEGEND</b> — 300 wins
+    </div>
+    <div style="font-size:9px;color:var(--muted);margin-top:8px;line-height:1.7">Rank affects the opponent you face in Arena Mode:<br>Veteran → Zombie. Elite → Slime Beast. Champion → Skin Walker (jump scare on your defeat). Legend → Final Boss with 5 HP.</div>
+  </div>
+
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">WINNING TIPS</div>
+  <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:14px;margin-bottom:20px">
+    <div style="font-size:9px;color:var(--muted);line-height:2">
+      🧠 Never open with SHOOT — you start with 0 ammo.<br>
+      🧠 If opponent has no ammo, RELOAD is safe — they can't hurt you.<br>
+      🧠 3 reloads then bait a block before firing the Bazooka.<br>
+      🧠 Perfect timing reload (+2 ammo) reaches max ammo in 2 reloads instead of 3.<br>
+      🧠 In Void Lane — missing beats costs you. Stay engaged every beat.<br>
+      🧠 In Multiplayer — predict your opponent's next move, not last move.
+    </div>
+  </div>
+
+  <button onclick="document.getElementById('howto-ov').remove()" class="btn prim" style="max-width:280px;width:100%">GOT IT — LET'S DUEL</button>
+</div>`;
+    document.body.appendChild(ov);
+  } else {
+    ov.remove();
+  }
+}
+
+// ══════════════════════════════════════════════
+// DUEL CREDITS SYSTEM
+// ══════════════════════════════════════════════
+function dcBalance(){return parseInt(localStorage.getItem('arduel_dc')||'0')}
+function dcSet(n){localStorage.setItem('arduel_dc',Math.max(0,n))}
+function dcAdd(n,desc){
+  const old=dcBalance();
+  dcSet(old+n);
+  dcLogTx(n>0?'+'+n:n,desc);
+  animDCTicker(n);
+  renderTitle();
+}
+function dcDeduct(n,desc){dcAdd(-n,desc)}
+
+// TX log (last 20)
+function dcLogTx(amt,desc){
+  const txs=JSON.parse(localStorage.getItem('arduel_txs')||'[]');
+  txs.unshift({amt,desc,ts:Date.now()});
+  if(txs.length>20) txs.pop();
+  localStorage.setItem('arduel_txs',JSON.stringify(txs));
+}
+
+// ── DC TICKER ANIMATION (win/loss on result screen) ──
+let _tickerTO=null;
+function animDCTicker(delta){
+  const el=document.getElementById('dc-ticker-ov');
+  if(!el)return;
+  const pos=delta>0;
+  el.textContent=(pos?'+':'')+delta+' DC';
+  el.style.color=pos?'var(--cyan)':'var(--red)';
+  el.classList.add('show');
+  if(_tickerTO)clearTimeout(_tickerTO);
+  // Count up/down animation
+  let cur=0,target=Math.abs(delta),step=Math.ceil(target/20);
+  const iv=setInterval(()=>{
+    cur=Math.min(cur+step,target);
+    el.textContent=(pos?'+':'-')+cur+' DC';
+    if(cur>=target){clearInterval(iv)}
+  },30);
+  _tickerTO=setTimeout(()=>{
+    el.classList.remove('show');
+  },2800);
+}
+
+// ── DAILY LOGIN REWARD ──
+const DAILY_REWARDS=[10,15,20,25,30,40,50]; // streak day 1-7+
+function getDailyState(){return JSON.parse(localStorage.getItem('arduel_daily')||'{"last":0,"streak":0}')}
+function setDailyState(s){localStorage.setItem('arduel_daily',JSON.stringify(s))}
+function canClaimDaily(){
+  const {last}=getDailyState();
+  const now=Date.now();
+  const lastDate=new Date(last).toDateString();
+  const today=new Date(now).toDateString();
+  return lastDate!==today;
+}
+function isDailyEligible(){
+  // Eligible if: has Founder Pack OR Season Pass OR rank >= Duelist (5 wins)
+  return gWins>=5||COSMETICS.seasonPass||localStorage.getItem('arduel_founder')==='1';
+}
+function claimDailyReward(){
+  if(!canClaimDaily())return;
+  const state=getDailyState();
+  const streak=canClaimDaily()?(state.streak+1):1;
+  const reward=DAILY_REWARDS[Math.min(streak-1,DAILY_REWARDS.length-1)];
+  setDailyState({last:Date.now(),streak});
+  dcAdd(reward,'Daily Login Reward (Day '+streak+')');
+  const btn=document.getElementById('daily-claim-btn');
+  if(btn){btn.textContent='CLAIMED ✓';btn.disabled=true;}
+  const sub=document.getElementById('daily-sub-text');
+  if(sub)sub.textContent='+'+reward+' DC · Day '+streak+' streak';
+  updateProfileDCDisplay();
+}
+
+// ── BUY DC ──
+let _selectedPack=null;
+function openBuyDC(){
+  document.getElementById('buy-dc-modal').classList.add('on');
+  _selectedPack=null;
+  document.querySelectorAll('.pack').forEach(p=>p.classList.remove('sel'));
+  const btn=document.getElementById('buy-confirm-btn');
+  btn.textContent='SELECT A PACK';btn.style.opacity='.4';btn.style.pointerEvents='none';
+}
+function closeBuyDC(){document.getElementById('buy-dc-modal').classList.remove('on')}
+function selectPack(el,dc,usd){
+  document.querySelectorAll('.pack').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  _selectedPack={dc,usd};
+  const btn=document.getElementById('buy-confirm-btn');
+  btn.textContent='BUY '+dc.toLocaleString()+' DC — $'+usd;
+  btn.style.opacity='1';btn.style.pointerEvents='all';
+}
+function buyDC(){
+  if(!_selectedPack)return;
+  // Opens Stripe — for now shows coming soon alert
+  // When Stripe DC product links are ready, replace with window.open(stripeLink)
+  alert('💳 USD → DC purchase coming soon!\n\nVisit arduel.com and grab the Founder Pack to get early DC access.\n\ndiscord.gg/JWtfZv7gaj for updates.');
+  closeBuyDC();
+}
+
+// ── PROFILE SCREEN ──
+function openProfile(){
+  // Populate stats
+  document.getElementById('psr-rank').innerHTML=rankBadgeInline(gWins);
+  document.getElementById('psr-wins').textContent=gWins;
+  document.getElementById('psr-losses').textContent=gLosses;
+  const total=gWins+gLosses;
+  document.getElementById('psr-total').textContent=total;
+  document.getElementById('psr-wr').textContent=total>0?Math.round(gWins/total*100)+'%':'—';
+  const wagered=parseInt(localStorage.getItem('arduel_dc_wagered')||'0');
+  const won=parseInt(localStorage.getItem('arduel_dc_won')||'0');
+  document.getElementById('psr-wagered').textContent=wagered+' DC';
+  document.getElementById('psr-won').textContent=won+' DC';
+  updateProfileDCDisplay();
+  // Daily reward row
+  const dr=document.getElementById('daily-reward-row');
+  if(isDailyEligible()){
+    dr.style.display='flex';
+    const canClaim=canClaimDaily();
+    const btn=document.getElementById('daily-claim-btn');
+    const sub=document.getElementById('daily-sub-text');
+    const {streak}=getDailyState();
+    const nextReward=DAILY_REWARDS[Math.min(streak,DAILY_REWARDS.length-1)];
+    if(canClaim){
+      btn.textContent='CLAIM +'+nextReward+' DC';btn.disabled=false;
+      sub.textContent='Day '+(streak+1)+' reward available';
+    } else {
+      btn.textContent='CLAIMED ✓';btn.disabled=true;
+      sub.textContent='Day '+streak+' claimed · Come back tomorrow';
+    }
+  } else {
+    dr.style.display='none';
+  }
+  show('sprofile');
+}
+function updateProfileDCDisplay(){
+  const bal=dcBalance();
+  const el=document.getElementById('profile-dc-display');
+  if(el) el.textContent=bal.toLocaleString();
+}
+function toggleTxHistory(){
+  const el=document.getElementById('tx-history');
+  if(el.style.display==='none'){
+    // Populate
+    const txs=JSON.parse(localStorage.getItem('arduel_txs')||'[]');
+    const list=document.getElementById('tx-list');
+    if(txs.length===0){
+      list.innerHTML='<div style="font-size:9px;color:var(--muted);text-align:center;padding:16px;letter-spacing:1px">NO TRANSACTIONS YET</div>';
+    } else {
+      list.innerHTML=txs.map(tx=>{
+        const pos=String(tx.amt).startsWith('+');
+        const d=new Date(tx.ts);
+        const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        return`<div class="tx-item">
+          <span class="tx-desc">${tx.desc} · ${dateStr}</span>
+          <span class="tx-amt ${pos?'pos':'neg'}">${tx.amt}</span>
+        </div>`;
+      }).join('');
+    }
+    el.style.display='block';
+  } else {
+    el.style.display='none';
+  }
+}
+
+// ── HOOK DC INTO MATCH RESULTS ──
+function awardMatchDC(won,tied,wager){
+  if(tied)return;
+  if(wager>0){
+    const rake=Math.floor(wager*.1);
+    const payout=wager*2-(rake*2);
+    if(won){
+      dcAdd(payout,'Wager Win vs opponent');
+      const prev=parseInt(localStorage.getItem('arduel_dc_won')||'0');
+      localStorage.setItem('arduel_dc_won',prev+payout);
+    } else {
+      dcDeduct(wager,'Wager Loss vs opponent');
+    }
+    const prev=parseInt(localStorage.getItem('arduel_dc_wagered')||'0');
+    localStorage.setItem('arduel_dc_wagered',prev+wager);
+  } else if(won){
+    // Small DC reward for free wins
+    dcAdd(2,'Match Win');
+  }
 }
 
 // ── INIT ──
