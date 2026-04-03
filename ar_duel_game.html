@@ -494,7 +494,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 <div id="sprofile" class="screen">
   <div class="profile-header">
     <div style="font-family:var(--disp);font-size:24px;letter-spacing:2px;color:var(--cyan)">MY PROFILE</div>
-    <button class="profile-close" onclick="show('st')">✕ CLOSE</button>
+    <button class="profile-close" onclick="closeProfile()">✕ CLOSE</button>
   </div>
 
   <!-- DC Balance Card -->
@@ -542,7 +542,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 
   <!-- TX History (hidden by default) -->
-  <div id="tx-history" style="display:none;width:100%;max-width:360px">
+  <div id="tx-history" style="display:none;width:100%;max-width:360px;max-height:280px;overflow-y:auto;border:.5px solid var(--border2);border-radius:6px;background:var(--surface)">
     <div style="font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:8px 0 4px;padding:0 2px">TRANSACTION HISTORY</div>
     <div class="tx-list" id="tx-list"></div>
   </div>
@@ -1142,7 +1142,7 @@ function renderTitle(){
       <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
     </div>
     <div style="height:6px"></div>
-    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">⚡ MULTIPLAYER PvP</button>
+    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">🔒 MULTIPLAYER PvP</button>
     <div style="height:4px"></div>`;
   applyRingSkin(COSMETICS.ringSkin);
 }
@@ -1483,7 +1483,7 @@ function buildOpponent3D(variant){
   // Opponent block wall — rises toward player when AI blocks
   const owG=new T.Group();
   owG.position.set(0,-1.9,.72); // starts hidden below floor level, in front of opponent
-  const OTW=.28,OTH=.28,OTD=.09,OGAP=.025;
+  const OTW=.36,OTH=.36,OTD=.10,OGAP=.028;
   const otmat=new T.MeshLambertMaterial({color:0x2a2a48});
   for(let r=0;r<4;r++) for(let c=0;c<4;c++){
     const ot=bxv(OTW,OTH,OTD,otmat.clone());
@@ -1495,7 +1495,10 @@ function buildOpponent3D(variant){
   }
   const owt=bxv(4*(OTW+OGAP)+.04,.04,OTD+.02,new T.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:.8}));
   owt.position.set(0,4*(OTH+OGAP)-.01,0);owG.add(owt);
-  g.add(owG);g._owG=owG;g._owTy=-1.9;
+  // Wall added to scene (not c2) so it doesn't fall during void animation
+  owG._sceneAttached=true;
+  g._owG=owG;g._owTy=-1.9;
+  g._owGPending=owG; // attached to scene in initThree after c2 is added
 
   g._as='idle';g._at=0;g._ad=1;g._bz=-3.8;g._variant=variant;
   return g;
@@ -1538,6 +1541,13 @@ function initThree(){
   // Opponent character — variant-aware builder
   c2=buildOpponent3D(opponentVariant);
   c2.position.set(0,0,-3.8);c2.rotation.y=0;tScene.add(c2);
+  // Attach opponent wall to scene (not c2 group) so it doesn't fall during void animation
+  if(c2._owGPending){
+    const ow=c2._owGPending;
+    ow.position.set(0,-1.9,-3.8+.72);
+    tScene.add(ow);
+    c2._owG=ow;
+  }
 
   // Camera weapon — PISTOL
   cwG=new T.Group();
@@ -1587,8 +1597,11 @@ function initThree(){
     tickVoidFall(dt);
     tickVariantFX(dt,lc.t);
     bwG.position.y+=(bwG._ty-bwG.position.y)*Math.min(1,dt*14);
-    // Opponent block wall
-    if(c2&&c2._owG) c2._owG.position.y+=(c2._owTy-c2._owG.position.y)*Math.min(1,dt*14);
+    // Opponent block wall (scene-attached, tracks c2 x position)
+    if(c2&&c2._owG){
+      c2._owG.position.y+=(c2._owTy-c2._owG.position.y)*Math.min(1,dt*14);
+      c2._owG.position.x=c2.position.x;
+    }
     cwG.position.y=-.27+Math.sin(lc.t*1.4)*.005;cwG.rotation.z=Math.sin(lc.t*.9)*.008;
     bazWep.position.y=-.3+Math.sin(lc.t*1.1)*.008;bazWep.rotation.z=Math.sin(lc.t*.7)*.012;
     const _CB=window._arduelCB,_CL=window._arduelCL;
@@ -2110,7 +2123,7 @@ function selMap(m){cMap=m;document.querySelectorAll('.mcard').forEach(c=>c.class
 function startGame(mode){
   au();curMode=mode;
   if(mode==='3d') show('sm');
-  else if(mode==='mp') show('smp');
+  else if(mode==='mp') showMPComingSoon();
   else startCD();
 }
 
@@ -2123,12 +2136,20 @@ function startCD(){
       // Rebuild opponent with current rank variant
       opponentVariant=getOpponentVariant(gWins);
       if(c2) tScene.remove(c2);
-      // Clear slime particles from previous match
+      // Also remove old opponent wall from scene if exists
+      if(c2&&c2._owG&&c2._owG._sceneAttached) tScene.remove(c2._owG);
       slimeParticles.forEach(p=>tScene.remove(p));slimeParticles=[];
       jumpScareActive=false;jumpScareT=0;shadowFlickerT=0;
       c2=buildOpponent3D(opponentVariant);
       c2.position.set(0,0,-3.8);c2.rotation.y=0;
       tScene.add(c2);
+      // Attach wall to scene separately
+      if(c2._owGPending){
+        const ow=c2._owGPending;
+        ow.position.set(0,-1.9,-3.8+.72);
+        tScene.add(ow);
+        c2._owG=ow;
+      }
       document.getElementById('c3d').style.display='block';
       document.getElementById('arena2d').classList.remove('on');
       _countdown();
@@ -2179,7 +2200,7 @@ function _startMatch(){
 
 function goPlay(){
   if(curMode==='3d') show('sm');
-  else if(curMode==='mp') show('smp');
+  else if(curMode==='mp') showMPComingSoon();
   else startCD();
 }
 function backToMenu(){
@@ -2187,6 +2208,41 @@ function backToMenu(){
   if(mpRoom){sbDelete(mpRoom.code);if(mpChannel){try{mpChannel.close()}catch(e){}}}
   mpRoom=null;mpRole=null;mpChannel=null;
   document.getElementById('mp-tag').classList.remove('on');
+  show('st');renderTitle();
+}
+
+// MP locked — coming soon popup
+function showMPComingSoon(){
+  let ov=document.getElementById('mp-cs-ov');
+  if(ov){ov.remove();return;}
+  ov=document.createElement('div');
+  ov.id='mp-cs-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(5,5,13,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;font-family:var(--mono)';
+  ov.innerHTML=`
+<div style="width:100%;max-width:340px;text-align:center">
+  <div style="font-size:32px;margin-bottom:12px">🔒</div>
+  <div style="font-family:var(--disp);font-size:32px;letter-spacing:3px;color:var(--cyan);margin-bottom:6px">MULTIPLAYER PvP</div>
+  <div style="font-size:8px;letter-spacing:4px;color:var(--amber);text-transform:uppercase;margin-bottom:20px">COMING SOON</div>
+  <div style="background:var(--surface);border:.5px solid var(--border2);border-radius:8px;padding:20px;margin-bottom:16px;text-align:left">
+    <div style="font-size:10px;color:var(--txt);line-height:2;letter-spacing:.5px">
+      ⚡ Real-time 1v1 PvP — launching soon<br>
+      🪙 Requires <b style="color:var(--amber)">Duel Credits (DC)</b> for wager matches<br>
+      💳 Buy DC with USD via card or Solana<br>
+      🎯 Minimum wager entry: <b style="color:var(--amber)">500 DC</b><br>
+      🏆 Winner takes all · 10% platform rake<br>
+      🎁 Earn DC via daily login, Season Pass &amp; match wins
+    </div>
+  </div>
+  <div style="font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:16px">Join Discord for launch updates → discord.gg/JWtfZv7gaj</div>
+  <button onclick="document.getElementById('mp-cs-ov').remove()" class="btn prim" style="max-width:280px;width:100%">GOT IT</button>
+</div>`;
+  document.body.appendChild(ov);
+}
+
+// Close profile screen properly
+function closeProfile(){
+  const tx=document.getElementById('tx-history');
+  if(tx) tx.style.display='none';
   show('st');renderTitle();
 }
 
@@ -2476,6 +2532,10 @@ function awardMatchDC(won,tied,wager){
 
 // ── INIT ──
 renderTitle();show('st');
+// Show how to play on very first visit
+if(!localStorage.getItem('arduel_played')){
+  setTimeout(()=>{localStorage.setItem('arduel_played','1');howTo();},600);
+}
 </script>
 </body>
 </html>
