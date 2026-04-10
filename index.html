@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#05050d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<!-- AdSense active: ca-pub-8836165506742958 -->
+<!-- Google AdSense — publisher: ca-pub-8836165506742958 -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -375,6 +375,134 @@ hr{border:none;border-top:.5px solid var(--border)}
 @media(max-width:400px){
   .stats{grid-template-columns:1fr 1fr}
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GAMEPLAY PREVIEW WINDOWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── Outer frame shell ── */
+.gpw{
+  position:relative;
+  border-radius:10px;
+  overflow:hidden;
+  background:#01010a;
+  border:.5px solid rgba(61,255,212,.16);
+  box-shadow:
+    0 0 0 .5px rgba(0,0,0,.8),
+    0 4px 32px rgba(0,0,0,.6),
+    0 0 60px rgba(61,255,212,.04),
+    inset 0 0 0 .5px rgba(61,255,212,.04);
+}
+
+/* ── Browser chrome bar ── */
+.gpw-bar{
+  height:30px;
+  background:#080814;
+  border-bottom:.5px solid rgba(61,255,212,.08);
+  display:flex;align-items:center;
+  padding:0 14px;gap:7px;
+  position:relative;
+  flex-shrink:0;
+}
+.gpw-dots{display:flex;gap:5px;align-items:center}
+.gpw-dot{width:9px;height:9px;border-radius:50%}
+.gpw-dot-r{background:#ff5f57;box-shadow:0 0 4px rgba(255,95,87,.4)}
+.gpw-dot-y{background:#febc2e;box-shadow:0 0 4px rgba(254,188,46,.3)}
+.gpw-dot-g{background:#28c840;box-shadow:0 0 4px rgba(40,200,64,.3)}
+.gpw-url{
+  flex:1;margin:0 10px;
+  background:rgba(255,255,255,.04);border-radius:3px;
+  height:16px;display:flex;align-items:center;padding:0 8px;
+  border:.5px solid rgba(255,255,255,.06);
+}
+.gpw-url span{
+  font-size:7px;letter-spacing:1px;color:rgba(238,238,255,.28);
+  font-family:var(--mono);
+}
+.gpw-live{
+  font-size:7px;letter-spacing:2px;text-transform:uppercase;
+  background:rgba(61,255,212,.1);border:.5px solid rgba(61,255,212,.25);
+  color:var(--cyan);padding:2px 8px;border-radius:99px;
+  position:relative;
+}
+.gpw-live::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--cyan);display:inline-block;margin-right:5px;
+  animation:pulse 1.4s ease infinite;
+}
+
+/* ── iframe inside ── */
+.gpw iframe{
+  display:block;width:100%;border:none;
+  background:#01010a;
+}
+
+/* ── Scan-line overlay on top of preview ── */
+.gpw::after{
+  content:'';position:absolute;inset:30px 0 0 0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px);
+  z-index:2;
+}
+
+/* ── Corner accent marks ── */
+.gpw-corners{
+  position:absolute;inset:30px 0 0 0;pointer-events:none;z-index:3;
+}
+.gpw-corners::before,.gpw-corners::after{
+  content:'';position:absolute;
+  width:12px;height:12px;
+  border-color:rgba(61,255,212,.35);
+  border-style:solid;
+}
+.gpw-corners::before{top:6px;left:6px;border-width:1px 0 0 1px}
+.gpw-corners::after{top:6px;right:6px;border-width:1px 1px 0 0}
+
+/* ── Caption below window ── */
+.gpw-caption{
+  font-size:8px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(238,238,255,.22);text-align:center;margin-top:10px;
+}
+
+/* ── HERO split layout ── */
+.hero-split{
+  width:100%;max-width:960px;margin:48px auto 0;
+  display:grid;grid-template-columns:1fr 1fr;gap:32px;
+  align-items:center;
+}
+@media(max-width:680px){
+  .hero-split{grid-template-columns:1fr;gap:20px}
+  .hero-split-text{display:none}
+}
+.hero-split-text{
+  display:flex;flex-direction:column;gap:12px;text-align:left;
+}
+.hst-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);opacity:.7}
+.hst-beat{
+  font-family:var(--disp);font-size:clamp(22px,4vw,38px);
+  letter-spacing:2px;line-height:1.1;color:var(--txt);
+}
+.hst-beat span{color:var(--cyan)}
+.hst-row{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:1px;color:var(--muted);
+}
+.hst-icon{
+  width:28px;height:28px;border-radius:4px;
+  background:rgba(61,255,212,.06);border:.5px solid rgba(61,255,212,.15);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  flex-shrink:0;
+}
+
+/* ── Compete full-width dramatic window ── */
+.gpw-compete{
+  max-width:700px;width:100%;margin:0 auto 32px;
+}
+
+/* ── Economy inline preview ── */
+.gpw-economy{
+  max-width:480px;width:100%;margin:32px auto 0;
+}
+
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TQPBY9KWDL"></script>
@@ -384,7 +512,15 @@ hr{border:none;border-top:.5px solid var(--border)}
   gtag("js", new Date());
   gtag("config", "G-TQPBY9KWDL");
 </script>
+<!-- AdSense: single load + Auto Ads enabled -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8836165506742958" crossorigin="anonymous"></script>
+<script>
+(adsbygoogle=window.adsbygoogle||[]).push({
+  google_ad_client:"ca-pub-8836165506742958",
+  enable_page_level_ads:true,
+  overlays:{bottom:true}
+});
+</script>
 </head>
 <body>
 
@@ -401,8 +537,15 @@ hr{border:none;border-top:.5px solid var(--border)}
 </nav>
 
 <!-- TOP AD -->
+<!-- arduel-top-banner | slot 1756904601 -->
 <div class="ad-slot">
-  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8836165506742958" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-8836165506742958"
+    data-ad-slot="1756904601"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
 </div>
 
 <!-- TICKER -->
@@ -434,17 +577,39 @@ hr{border:none;border-top:.5px solid var(--border)}
   <div class="hero-eyebrow fade-up">Zero luck · Pure skill · Real prizes</div>
   <h1 class="hero-h1 fade-up delay-1">THE GAME<br>YOU ALREADY<br><span class="hl">KNOW.</span></h1>
   <p class="hero-sub-line fade-up delay-2">Reload · Shoot · Block</p>
-  <div class="ring-wrap fade-up delay-3">
-    <div class="ring-outer"></div>
-    <div class="ring-mid"></div>
-    <div class="ring-core">🎯</div>
-  </div>
-  <p class="hero-desc fade-up delay-4">The schoolyard 007 hand game — rebuilt for real competition. 30-second matches. Infinite skill ceiling. Win Duel Credits. Connect your Solana wallet.</p>
-  <div class="hero-btns fade-up delay-5">
+
+  <p class="hero-desc fade-up delay-3">The schoolyard 007 hand game — rebuilt for real competition. 30-second matches. Infinite skill ceiling. Win Duel Credits.</p>
+  <div class="hero-btns fade-up delay-4">
     <a href="ar_duel_game.html" class="btn-primary">Play Free Now →</a>
-    <a href="#compete" class="btn-ghost">See Tournaments</a>
+    <a href="#compete" class="btn-ghost">How It Works</a>
   </div>
-  <div class="scroll-hint fade-up delay-5">scroll</div>
+
+  <!-- ── HERO PREVIEW SPLIT ── -->
+  <div class="hero-split fade-up delay-5">
+    <div class="hero-split-text">
+      <div class="hst-label">Live match · Void Lane · Arena Mode</div>
+      <div class="hst-beat">THREE MOVES.<br><span>INFINITE</span><br>DEPTH.</div>
+      <div class="hst-row"><div class="hst-icon">🔄</div>Reload — build ammo, bait the block</div>
+      <div class="hst-row"><div class="hst-icon">🔫</div>Shoot — spend ammo, deal 1 damage</div>
+      <div class="hst-row"><div class="hst-icon">🛡️</div>Block — deflect any standard shot</div>
+      <div class="hst-row"><div class="hst-icon">🚀</div>3 reloads → Bazooka. Unblockable.</div>
+    </div>
+    <div class="gpw">
+      <div class="gpw-bar">
+        <div class="gpw-dots">
+          <div class="gpw-dot gpw-dot-r"></div>
+          <div class="gpw-dot gpw-dot-y"></div>
+          <div class="gpw-dot gpw-dot-g"></div>
+        </div>
+        <div class="gpw-url"><span>arduel.com · arena mode · void lane</span></div>
+        <div class="gpw-live">LIVE</div>
+      </div>
+      <div class="gpw-corners"></div>
+      <iframe src="arduel_gameplay_loop_v2.html" height="300" scrolling="no" loading="eager" title="AR Duel live gameplay preview"></iframe>
+    </div>
+  </div>
+
+  <div class="scroll-hint fade-up delay-5" style="margin-top:48px">scroll</div>
 </section>
 
 <!-- STATS -->
@@ -455,9 +620,13 @@ hr{border:none;border-top:.5px solid var(--border)}
   <div class="stat"><div class="stat-val">∞</div><div class="stat-lbl">Skill ceiling</div></div>
 </div>
 
-<!-- MID AD -->
+<!-- arduel-mid-rectangle | slot 9252251244 -->
 <div style="padding:28px 24px;position:relative;z-index:1;display:flex;justify-content:center">
-  <ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-8836165506742958" data-ad-format="rectangle" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
+  <ins class="adsbygoogle"
+    style="display:inline-block;width:300px;height:250px"
+    data-ad-client="ca-pub-8836165506742958"
+    data-ad-slot="9252251244"></ins>
+  <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
 </div>
 
 <!-- HOW IT WORKS -->
@@ -533,6 +702,24 @@ hr{border:none;border-top:.5px solid var(--border)}
 <section class="sec" id="compete">
   <div class="sec-tag">Competitions</div>
   <h2 class="sec-h2">PLAY FOR<br>REAL PRIZES.</h2>
+
+  <!-- ── COMPETE PREVIEW — full dramatic ── -->
+  <div class="gpw gpw-compete fade-up">
+    <div class="gpw-bar">
+      <div class="gpw-dots">
+        <div class="gpw-dot gpw-dot-r"></div>
+        <div class="gpw-dot gpw-dot-y"></div>
+        <div class="gpw-dot gpw-dot-g"></div>
+      </div>
+      <div class="gpw-url"><span>void lane · bazooka charge · opponent falls</span></div>
+      <div class="gpw-live">LIVE</div>
+    </div>
+    <div class="gpw-corners"></div>
+    <iframe src="arduel_gameplay_loop_v2.html" height="320" scrolling="no" loading="lazy" title="AR Duel compete preview"></iframe>
+  </div>
+  <div class="gpw-caption fade-up">every match plays out like this — no randomness, pure reads</div>
+
+  <div style="height:24px"></div>
   <div class="tournament-card" style="margin-bottom:16px">
     <div class="tc-header">
       <div class="tc-title">WEEKLY OPEN BRACKET</div>
@@ -574,6 +761,23 @@ hr{border:none;border-top:.5px solid var(--border)}
       </div>
     </div>
   </div>
+
+  <!-- ── ECONOMY PREVIEW — small accent ── -->
+  <div class="gpw gpw-economy fade-up">
+    <div class="gpw-bar">
+      <div class="gpw-dots">
+        <div class="gpw-dot gpw-dot-r"></div>
+        <div class="gpw-dot gpw-dot-y"></div>
+        <div class="gpw-dot gpw-dot-g"></div>
+      </div>
+      <div class="gpw-url"><span>arena mode · duel credits earned on every win</span></div>
+      <div class="gpw-live">LIVE</div>
+    </div>
+    <div class="gpw-corners"></div>
+    <iframe src="arduel_gameplay_loop_v2.html" height="220" scrolling="no" loading="lazy" title="AR Duel economy preview"></iframe>
+  </div>
+  <div class="gpw-caption fade-up">win the match, earn the credits</div>
+
 </section>
 
 <hr>
@@ -651,9 +855,13 @@ hr{border:none;border-top:.5px solid var(--border)}
   </div>
 </section>
 
-<!-- BOTTOM AD -->
+<!-- arduel-mid-rectangle (second placement) | slot 9252251244 -->
 <div style="padding:0 24px 28px;position:relative;z-index:1;display:flex;justify-content:center">
-  <ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-8836165506742958" data-ad-format="rectangle" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
+  <ins class="adsbygoogle"
+    style="display:inline-block;width:300px;height:250px"
+    data-ad-client="ca-pub-8836165506742958"
+    data-ad-slot="9252251244"></ins>
+  <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
 </div>
 
 
@@ -695,8 +903,16 @@ hr{border:none;border-top:.5px solid var(--border)}
   </div>
 </section>
 
-<!-- FOOTER AD -->
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8836165506742958" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
+<!-- arduel-bottom-banner | slot 9563030402 -->
+<div style="padding:0 24px 24px;position:relative;z-index:1">
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-8836165506742958"
+    data-ad-slot="9563030402"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
+</div>
 
 <!-- FOOTER -->
 <footer>
