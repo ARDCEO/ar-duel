@@ -243,6 +243,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .sl2{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:3px}
 /* Rank section on result screen */
 #sr-rank{margin:4px 0 18px;display:flex;flex-direction:column;align-items:center;gap:0}
+/* Mastery quote */
+#mastery-quote{max-width:280px;text-align:center;margin:0 auto 12px;opacity:0;transition:opacity 1.2s ease;min-height:0}
+#mastery-quote.show{opacity:1}
+.mq-line{width:24px;height:.5px;background:rgba(61,255,212,.3);margin:0 auto 10px}
+.mq-text{font-size:10px;line-height:1.75;color:rgba(238,238,255,.55);letter-spacing:.3px;font-style:italic}
+.mq-attr{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(61,255,212,.35);margin-top:7px}
 
 /* ── MULTIPLAYER SCREENS ── */
 #smp{background:rgba(5,5,13,.97);gap:10px}
@@ -603,6 +609,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <div id="wager-result"></div>
   <div id="sr-rank"></div>
+  <div id="mastery-quote"></div>
   <button class="btn prim" onclick="goPlay()">PLAY AGAIN</button>
   <button class="btn ghost" onclick="backToMenu()">MENU</button>
   <a class="btn ghost" href="https://discord.gg/JWtfZv7gaj" target="_blank" style="display:block;text-align:center;text-decoration:none">💬 JOIN DISCORD</a>
@@ -630,6 +637,15 @@ let threeOk  = false;
 function saveState(){
   localStorage.setItem('arduel_wins',  gWins);
   localStorage.setItem('arduel_losses',gLosses);
+}
+
+// Increment global match counter on Supabase (fire-and-forget)
+function incrementMatchCounter(){
+  fetch(`${SB_URL}/rest/v1/rpc/increment_match_counter`,{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+    body:'{}'
+  }).catch(()=>{});
 }
 
 // ══════════════════════════════════════════════
@@ -972,6 +988,10 @@ function mpEndMatch(winner){
 
   // Award/deduct DC with ticker animation
   setTimeout(()=>awardMatchDC(iWon,tied,mpWager),600);
+  // Global match counter
+  incrementMatchCounter();
+  // Mastery quote — never on wager matches
+  showMasteryQuote(gWins, iWon, tied, mpWager);
 
   // Wager result display
   const wr=document.getElementById('wager-result');
@@ -2158,6 +2178,10 @@ function endMatch(){
 
   // Award DC for vs-AI win (small amount)
   setTimeout(()=>awardMatchDC(won,tied,0),600);
+  // Global match counter
+  incrementMatchCounter();
+  // Mastery quote — selective appearance
+  showMasteryQuote(gWins, won, tied, 0);
 
   // Void Lane: play fall animation before showing result screen
   if(curMode==='3d'&&cMap==='platform'&&!tied){
@@ -2277,6 +2301,9 @@ function _startMatch(){
   // Hard-reset both walls at match start
   if(bwG){bwG._ty=-1.9;bwG.position.y=-1.9}
   if(c2&&c2._owG){c2._owTy=-1.9;c2._owG.position.y=-1.9}
+  // Clear quote from previous result screen
+  const mq=document.getElementById('mastery-quote');
+  if(mq){mq.innerHTML='';mq.classList.remove('show')}
   document.getElementById('hud-btns').classList.add('on');
   // Music + mute button
   const mb=document.getElementById('mute-btn');if(mb)mb.textContent=bgMuted?'🔇':'🔊';
@@ -2630,8 +2657,145 @@ function awardMatchDC(won,tied,wager){
   }
 }
 
-// ── INIT ──
-renderTitle();show('st');
+// ══════════════════════════════════════════════
+// MASTERY QUOTES — Robert Greene
+// ══════════════════════════════════════════════
+const MQ = {
+  // [rankId]: { win: [...], loss: [...] }
+  rookie: {
+    win: [
+      "Every master was once a disaster. You have chosen the path. That choice is rarer than the skill.",
+      "The first victories mean little about your ceiling. They reveal only that you have begun.",
+    ],
+    loss: [
+      "The moment of defeat is the most honest data you will ever receive. Do not look away from it.",
+      "You cannot skip the phase of feeling inadequate. Every master passed through it. Most quit here.",
+    ]
+  },
+  duelist: {
+    win: [
+      "In the early stages, victory teaches you almost nothing. Defeat is the real curriculum.",
+      "You are accumulating experience. Be patient — the pattern you cannot yet see is forming beneath the surface.",
+    ],
+    loss: [
+      "Your opponent just showed you something about yourself that no mirror could. Study it.",
+      "A loss at this stage is not evidence of your limits. It is a map of what you have not yet learned.",
+    ]
+  },
+  sharpshooter: {
+    win: [
+      "You are developing skill. Be careful — this is the phase where overconfidence enters like a slow poison.",
+      "Skill is now yours. Wisdom about that skill has not yet arrived. That gap is your most dangerous blind spot.",
+    ],
+    loss: [
+      "The resistance you feel is the sign you are pushing against the edge of your current ability. That edge is where growth lives.",
+      "Masters at your stage do not dwell on loss. They extract the lesson and release the rest within the hour.",
+    ]
+  },
+  veteran: {
+    win: [
+      "Skill without strategy is talent without direction. Begin to study the patterns beneath the patterns.",
+      "You are winning more than you lose. This is the moment most players stop growing. Do not stop.",
+    ],
+    loss: [
+      "A veteran loses differently than a rookie. The rookie is surprised. The veteran already knows what they must fix.",
+      "At this rank, your losses have a specific shape. That specificity is itself a form of advancement.",
+    ]
+  },
+  elite: {
+    win: [
+      "You are no longer learning the game. You are beginning to understand it. These are not the same thing.",
+      "Elite performance is not a destination. It is a discipline you recommit to after every match — win or lose.",
+    ],
+    loss: [
+      "At your level, defeat is not failure. It is the precise location of your next breakthrough. Mark it.",
+      "The closer you get to mastery, the more uncomfortable the losses become. That discomfort is correct — it means your standards have risen.",
+    ]
+  },
+  champion: {
+    win: [
+      "Champions are defined not by their wins but by how they carry them — without inflation, without rest.",
+      "You have done what very few do. Now comes the harder work: maintaining this height without the hunger of ascent.",
+    ],
+    loss: [
+      "The closer you get to mastery, the more specifically you can identify what went wrong. That specificity is itself a form of advancement.",
+      "A champion who loses and learns is more dangerous than a champion who only wins. Become more dangerous.",
+    ]
+  },
+  legend: {
+    win: [
+      "The true master returns to the fundamentals not because they forgot them — but because they now understand them completely.",
+      "At this level, mastery is not something you have achieved. It is something you maintain — through practice, through presence, through humility.",
+    ],
+    loss: [
+      "At this level, a loss is a conversation with an equal. Respect what it said.",
+      "The legend who still loses occasionally has not failed. They have remained alive. Stagnation is the only true defeat.",
+    ]
+  }
+};
+
+function shouldShowQuote(wins, won, tied, wager){
+  if(tied) return false;
+  if(wager > 0) return false; // don't dilute wager results
+
+  const lastQuoteBeat = parseInt(localStorage.getItem('arduel_last_quote_beat') || '0');
+  const currentBeat   = parseInt(localStorage.getItem('arduel_total_beats') || '0') + 1;
+  localStorage.setItem('arduel_total_beats', currentBeat);
+  if(currentBeat - lastQuoteBeat < 2) return false; // never two in a row
+
+  const rank = getRank(wins);
+  const next = getNextRank(wins);
+  if(!next) {
+    // Legend — show roughly 1 in 10
+    return Math.random() < 0.10;
+  }
+
+  const span = next.min - rank.min;
+  const done = wins - rank.min;
+  const pct  = done / span;
+
+  // Trigger: midpoint (45–55%), one away from rank-up, or just ranked up (done===0)
+  const isMid     = pct >= 0.45 && pct <= 0.55;
+  const isAlmost  = next.min - wins === 1;
+  const isJustUp  = done === 0 && wins > 0;
+
+  if(isMid || isAlmost || isJustUp) return true;
+
+  // Random trigger: ~1 in 8, weighted slightly toward losses
+  const randomChance = won ? 0.10 : 0.14;
+  return Math.random() < randomChance;
+}
+
+function getQuote(wins, won){
+  const rank  = getRank(wins);
+  const pool  = MQ[rank.id];
+  if(!pool) return null;
+  const lines = won ? pool.win : pool.loss;
+  return lines[Math.floor(Math.random() * lines.length)];
+}
+
+function showMasteryQuote(wins, won, tied, wager){
+  const el = document.getElementById('mastery-quote');
+  if(!el) return;
+  el.innerHTML = '';
+  el.classList.remove('show');
+  if(!shouldShowQuote(wins, won, tied, wager)) return;
+
+  const text = getQuote(wins, won);
+  if(!text) return;
+
+  // Record that we showed one
+  const beat = parseInt(localStorage.getItem('arduel_total_beats') || '0');
+  localStorage.setItem('arduel_last_quote_beat', beat);
+
+  el.innerHTML = `
+    <div class="mq-line"></div>
+    <div class="mq-text">"${text}"</div>
+    <div class="mq-attr">— Robert Greene, Mastery</div>`;
+
+  // Fade in after result title has settled
+  setTimeout(() => el.classList.add('show'), 1400);
+}
 // Show how to play on very first visit
 if(!localStorage.getItem('arduel_played')){
   setTimeout(()=>{localStorage.setItem('arduel_played','1');howTo();},600);

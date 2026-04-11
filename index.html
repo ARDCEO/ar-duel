@@ -512,15 +512,8 @@ hr{border:none;border-top:.5px solid var(--border)}
   gtag("js", new Date());
   gtag("config", "G-TQPBY9KWDL");
 </script>
-<!-- AdSense: single load + Auto Ads enabled -->
+<!-- Google AdSense — ca-pub-8836165506742958 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8836165506742958" crossorigin="anonymous"></script>
-<script>
-(adsbygoogle=window.adsbygoogle||[]).push({
-  google_ad_client:"ca-pub-8836165506742958",
-  enable_page_level_ads:true,
-  overlays:{bottom:true}
-});
-</script>
 </head>
 <body>
 
@@ -556,7 +549,6 @@ hr{border:none;border-top:.5px solid var(--border)}
     <div class="ticker-item"><span>🛡️</span>BLOCK TO REFLECT</div>
     <div class="ticker-item"><span>🚀</span>3x RELOAD = BAZOOKA</div>
     <div class="ticker-item"><span>⚡</span>PERFECT TIMING BONUS</div>
-    <div class="ticker-item"><span>🏆</span>WEEKLY TOURNAMENTS LIVE</div>
     <div class="ticker-item"><span>💰</span>DUEL CREDITS — EARN REAL PRIZES</div>
     <div class="ticker-item"><span>◎</span>SOLANA WALLET INTEGRATION COMING</div>
     <!-- duplicate for seamless loop -->
@@ -565,7 +557,6 @@ hr{border:none;border-top:.5px solid var(--border)}
     <div class="ticker-item"><span>🛡️</span>BLOCK TO REFLECT</div>
     <div class="ticker-item"><span>🚀</span>3x RELOAD = BAZOOKA</div>
     <div class="ticker-item"><span>⚡</span>PERFECT TIMING BONUS</div>
-    <div class="ticker-item"><span>🏆</span>WEEKLY TOURNAMENTS LIVE</div>
     <div class="ticker-item"><span>💰</span>DUEL CREDITS — EARN REAL PRIZES</div>
     <div class="ticker-item"><span>◎</span>SOLANA WALLET INTEGRATION COMING</div>
   </div>
@@ -605,7 +596,7 @@ hr{border:none;border-top:.5px solid var(--border)}
         <div class="gpw-live">LIVE</div>
       </div>
       <div class="gpw-corners"></div>
-      <iframe src="arduel_gameplay_loop_v2.html" height="300" scrolling="no" loading="eager" title="AR Duel live gameplay preview"></iframe>
+      <canvas id="gpw1" style="display:block;width:100%;height:300px;background:#01010a"></canvas>
     </div>
   </div>
 
@@ -614,18 +605,33 @@ hr{border:none;border-top:.5px solid var(--border)}
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat"><div class="stat-val">30s</div><div class="stat-lbl">Max match length</div></div>
+  <div class="stat"><div class="stat-val" id="live-matches">—</div><div class="stat-lbl">Matches played</div></div>
+  <div class="stat"><div class="stat-val">30s</div><div class="stat-lbl">Match length</div></div>
   <div class="stat"><div class="stat-val">0%</div><div class="stat-lbl">Random chance</div></div>
   <div class="stat"><div class="stat-val">3↑</div><div class="stat-lbl">Reloads to Bazooka</div></div>
-  <div class="stat"><div class="stat-val">∞</div><div class="stat-lbl">Skill ceiling</div></div>
 </div>
+<script>
+(async function(){
+  try{
+    const r=await fetch('https://dasltyjqkqapbgdaxhgt.supabase.co/rest/v1/match_counter?select=total',{
+      headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhc2x0eWpxa3FhcGJnZGF4aGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjI0NTMsImV4cCI6MjA5MDczODQ1M30.UJ9r_xOM6w7F-JyPLqzjQ-wNv0yaDp7pFz1ari8laaE'}
+    });
+    const d=await r.json();
+    if(d&&d[0]&&d[0].total){
+      const n=parseInt(d[0].total);
+      document.getElementById('live-matches').textContent=n.toLocaleString();
+    }
+  }catch(e){}
+})();
+</script>
 
 <!-- arduel-mid-rectangle | slot 9252251244 -->
 <div style="padding:28px 24px;position:relative;z-index:1;display:flex;justify-content:center">
   <ins class="adsbygoogle"
     style="display:inline-block;width:300px;height:250px"
     data-ad-client="ca-pub-8836165506742958"
-    data-ad-slot="9252251244"></ins>
+    data-ad-slot="9252251244"
+    data-ad-format="rectangle"></ins>
   <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
 </div>
 
@@ -715,28 +721,28 @@ hr{border:none;border-top:.5px solid var(--border)}
       <div class="gpw-live">LIVE</div>
     </div>
     <div class="gpw-corners"></div>
-    <iframe src="arduel_gameplay_loop_v2.html" height="320" scrolling="no" loading="lazy" title="AR Duel compete preview"></iframe>
+    <canvas id="gpw2" style="display:block;width:100%;height:320px;background:#01010a"></canvas>
   </div>
   <div class="gpw-caption fade-up">every match plays out like this — no randomness, pure reads</div>
 
   <div style="height:24px"></div>
   <div class="tournament-card" style="margin-bottom:16px">
     <div class="tc-header">
-      <div class="tc-title">WEEKLY OPEN BRACKET</div>
-      <div class="tc-live">UPCOMING</div>
+      <div class="tc-title">SEASON 1 BRACKET</div>
+      <div class="tc-live" style="color:var(--amber);border-color:var(--amber);background:rgba(255,210,63,.06)">LAUNCHING WITH MULTIPLAYER</div>
     </div>
     <div class="tc-body">
-      <div class="tc-stat"><div class="tc-stat-val">128</div><div class="tc-stat-lbl">Players max</div></div>
-      <div class="tc-stat"><div class="tc-stat-val">500<span style="font-size:16px">DC</span></div><div class="tc-stat-lbl">Prize pool</div></div>
-      <div class="tc-stat"><div class="tc-stat-val">Free</div><div class="tc-stat-lbl">Entry</div></div>
-      <div class="tc-stat"><div class="tc-stat-val">BO3</div><div class="tc-stat-lbl">Match format</div></div>
+      <div class="tc-stat"><div class="tc-stat-val" style="color:var(--amber)">BO3</div><div class="tc-stat-lbl">Match format</div></div>
+      <div class="tc-stat"><div class="tc-stat-val" style="color:var(--amber)">DC</div><div class="tc-stat-lbl">Prize pool</div></div>
+      <div class="tc-stat"><div class="tc-stat-val" style="color:var(--amber)">FREE</div><div class="tc-stat-lbl">Entry</div></div>
+      <div class="tc-stat"><div class="tc-stat-val" style="color:var(--amber)">7</div><div class="tc-stat-lbl">Rank tiers</div></div>
     </div>
     <div class="tc-footer">
-      <a href="ar_duel_game.html" class="btn-primary" style="font-size:11px;padding:10px 20px">Enter Tournament →</a>
+      <a href="ar_duel_game.html" class="btn-primary" style="font-size:11px;padding:10px 20px">Play Now — Build Your Rank →</a>
       <a href="#early-access" class="btn-ghost" style="font-size:11px;padding:10px 16px">Get notified</a>
     </div>
   </div>
-  <p style="font-size:11px;color:var(--muted);text-align:center;letter-spacing:1px">Ranked seasons, championship brackets, and Duel Credit prize pools launching with multiplayer.</p>
+  <p style="font-size:11px;color:var(--muted);text-align:center;letter-spacing:1px">Ranked seasons, Duel Credit prize pools, and bracket tournaments launching with multiplayer.</p>
 </section>
 
 <hr>
@@ -774,7 +780,7 @@ hr{border:none;border-top:.5px solid var(--border)}
       <div class="gpw-live">LIVE</div>
     </div>
     <div class="gpw-corners"></div>
-    <iframe src="arduel_gameplay_loop_v2.html" height="220" scrolling="no" loading="lazy" title="AR Duel economy preview"></iframe>
+    <canvas id="gpw3" style="display:block;width:100%;height:220px;background:#01010a"></canvas>
   </div>
   <div class="gpw-caption fade-up">win the match, earn the credits</div>
 
@@ -860,7 +866,8 @@ hr{border:none;border-top:.5px solid var(--border)}
   <ins class="adsbygoogle"
     style="display:inline-block;width:300px;height:250px"
     data-ad-client="ca-pub-8836165506742958"
-    data-ad-slot="9252251244"></ins>
+    data-ad-slot="9252251244"
+    data-ad-format="rectangle"></ins>
   <script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>
 </div>
 
@@ -921,15 +928,12 @@ hr{border:none;border-top:.5px solid var(--border)}
     <div class="footer-links">
       <a href="ar_duel_game.html">Play</a>
       <a href="#compete">Compete</a>
-      <a href="https://discord.gg/JWtfZv7gaj" target="_blank">Discord</a>
       <a href="#roadmap">Roadmap</a>
+      <a href="https://discord.gg/JWtfZv7gaj" target="_blank">Discord ↗</a>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="#">Discord</a>
-      <a href="#">Twitter/X</a>
-      <a href="#">TikTok</a>
     </div>
-    <div class="footer-copy">© 2026 AR Duel. Created by Aure Marx. Built for the future. · arduel.com</div>
+    <div class="footer-copy">© 2026 AR Duel · arduel.com</div>
   </div>
 </footer>
 
@@ -956,6 +960,257 @@ document.querySelectorAll('.sec-tag,.sec-h2,.mechanic-grid,.ladder,.economy,.tou
   el.style.transition='opacity .5s ease, transform .5s ease';
   obs.observe(el);
 });
+</script>
+
+<!-- ── GAMEPLAY PREVIEWS — inline Three.js (no iframe) ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  if(typeof THREE==='undefined') return;
+
+  /* shared helpers */
+  const lm=c=>new THREE.MeshLambertMaterial({color:c});
+  const bm=(c,op)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op??1,side:THREE.DoubleSide,depthWrite:false});
+  const bx=(w,h,d,m)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);mesh.castShadow=true;return mesh};
+
+  function buildScene(){
+    const scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x01010a);
+    scene.fog=new THREE.FogExp2(0x01010a,.032);
+    scene.add(new THREE.AmbientLight(0x202040,1.0));
+    const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(3,8,5);scene.add(sun);
+    scene.add(Object.assign(new THREE.PointLight(0x3355ff,.35,30),{position:{x:0,y:10,z:0}}));
+    scene.add(Object.assign(new THREE.PointLight(0x3dffd4,.5,14),{position:{x:0,y:4,z:0}}));
+
+    /* stars */
+    const sg=new THREE.BufferGeometry(),sp=[];
+    for(let i=0;i<400;i++)sp.push((Math.random()-.5)*120,(Math.random()-.5)*60+15,(Math.random()-.5)*120);
+    sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));
+    scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0x9999bb,size:.2})));
+
+    /* platform */
+    const platL=bx(2,.3,22,lm(0x141428));platL.position.set(-1,-.15,0);scene.add(platL);
+    const platR=bx(2,.3,22,lm(0x141428));platR.position.set(1,-.15,0);scene.add(platR);
+    [-2,2].forEach(x=>{const e=bx(.07,.07,22,bm(0x3dffd4,.7));e.position.set(x,.07,0);scene.add(e)});
+    for(let z=-10;z<=10;z+=2){const s=bx(4,.008,.07,bm(0x20203a,.5));s.position.set(0,.005,z);scene.add(s)}
+
+    /* lava light */
+    const lavaL=new THREE.PointLight(0xff3300,0,28);lavaL.position.set(0,-8,-4);scene.add(lavaL);
+
+    return {scene,platL,platR,lavaL};
+  }
+
+  function buildOpp(scene){
+    const g=new THREE.Group();
+    const sk=0xFFCC88,body=0xff4040,dk=0x882222;
+    const hd=bx(.82,.82,.82,lm(sk));hd.position.y=2.45;g.add(hd);
+    [-.18,.18].forEach(x=>{const e=bx(.13,.11,.03,lm(0x111111));e.position.set(x,2.5,.42);g.add(e)});
+    const ns=bx(.08,.06,.03,lm(0xEEBB77));ns.position.set(0,2.4,.42);g.add(ns);
+    const tr=bx(.95,1.1,.52,lm(body));tr.position.y=1.65;g.add(tr);g._tr=tr;
+    const ag=new THREE.Group();ag.position.set(0,1.65,0);
+    [-.63,.63].forEach(x=>{const a=bx(.3,.88,.3,lm(body));a.position.x=x;ag.add(a)});
+    g.add(ag);g._ag=ag;
+    const wg=new THREE.Group();wg.position.set(.63,-.3,.3);
+    const bar=bx(.1,.1,.62,lm(0x222233));bar.position.z=.32;wg.add(bar);
+    wg.add(Object.assign(bx(.1,.26,.14,lm(0x333344)),{position:new THREE.Vector3(0,-.14,0)}));
+    ag.add(wg);
+    const ll=bx(.34,.95,.34,lm(dk));ll.position.set(-.22,.575,0);g.add(ll);g._ll=ll;
+    const rl=bx(.34,.95,.34,lm(dk));rl.position.set(.22,.575,0);g.add(rl);g._rl=rl;
+    g.position.set(0,0,-3.8);g._bz=-3.8;
+    scene.add(g);
+    return g;
+  }
+
+  function buildCam(camera){
+    /* pistol */
+    const cwG=new THREE.Group();
+    cwG.add(Object.assign(bx(.07,.07,.48,lm(0x222233)),{position:new THREE.Vector3(0,0,-.26)}));
+    cwG.add(Object.assign(bx(.07,.22,.12,lm(0x333344)),{position:new THREE.Vector3(0,-.12,0)}));
+    cwG.position.set(.3,-.27,-.58);
+    /* bazooka */
+    const bzG=new THREE.Group();
+    bzG.add(Object.assign(bx(.18,.18,.72,lm(0x111122)),{position:new THREE.Vector3(0,0,-.36)}));
+    bzG.add(Object.assign(bx(.24,.04,.58,bm(0x3dffd4,.85)),{position:new THREE.Vector3(0,-.1,-.36)}));
+    bzG.add(Object.assign(bx(.25,.06,.08,bm(0xffd23f,.9)),{position:new THREE.Vector3(0,0,-.18)}));
+    bzG.add(Object.assign(bx(.1,.28,.12,lm(0x222233)),{position:new THREE.Vector3(0,-.2,-.1)}));
+    bzG.position.set(.15,-.3,-.52);bzG.visible=false;
+    camera.add(cwG);camera.add(bzG);
+    return {cwG,bzG};
+  }
+
+  function initPreview(canvasId, seqOffset){
+    const canvas=document.getElementById(canvasId);
+    if(!canvas) return;
+
+    const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+    renderer.setClearColor(0x01010a,1);
+
+    const W=()=>canvas.clientWidth||500;
+    const H=()=>canvas.clientHeight||300;
+    renderer.setSize(W(),H(),false);
+
+    const camera=new THREE.PerspectiveCamera(62,W()/H(),.1,200);
+    const CB=new THREE.Vector3(.35,2.05,5.1),CL=new THREE.Vector3(0,1.4,-5);
+    camera.position.copy(CB);camera.lookAt(CL);
+
+    const {scene,platL,platR,lavaL}=buildScene();
+    scene.add(camera);
+    const opp=buildOpp(scene);
+    const {cwG,bzG}=buildCam(camera);
+
+    /* particles */
+    const pts=[];
+    function spawnPts(pos,col,n){
+      for(let i=0;i<n;i++){
+        const p=new THREE.Mesh(new THREE.BoxGeometry(.07,.07,.07),new THREE.MeshBasicMaterial({color:col,transparent:true}));
+        p.position.copy(pos);p._v=new THREE.Vector3((Math.random()-.5)*5,Math.random()*3.5+.5,(Math.random()-.5)*5);
+        p._l=.5+Math.random()*.3;p._ml=p._l;scene.add(p);pts.push(p);
+      }
+    }
+    function spawnSW(pos){
+      const sm=bm(0xff6600,.7);const sw=new THREE.Mesh(new THREE.PlaneGeometry(.1,.1),sm);
+      sw.position.copy(pos);sw.rotation.x=Math.PI/2;scene.add(sw);
+      let t=0;const iv=setInterval(()=>{t+=.04;sw.scale.set(t*18,t*18,1);sm.opacity=Math.max(0,.7-t*2.2);if(t>.32){clearInterval(iv);scene.remove(sw)}},16);
+    }
+    const vE=[];let eT=0;
+    function spawnEmber(){
+      const cols=[0xffee88,0xffaa00,0xff6600,0xff3300];
+      const s=.04+Math.random()*.12;
+      const p=new THREE.Mesh(new THREE.BoxGeometry(s,s,s),new THREE.MeshBasicMaterial({color:cols[Math.floor(Math.random()*cols.length)],transparent:true}));
+      p.position.set((Math.random()-.5)*7,-8.2+Math.random()*.4,-4+(Math.random()-.5)*10);
+      p._vy=1.2+Math.random()*3.8;p._vx=(Math.random()-.5)*1.4;p._life=.8+Math.random()*1.8;p._ml=p._life;
+      scene.add(p);vE.push(p);
+    }
+    const moths=[];let mT=0;
+    function spawnMoth(){
+      const s=.04+Math.random()*.05;const cols=[0x3dffd4,0x88ffee,0xaaffdd];
+      const p=new THREE.Mesh(new THREE.BoxGeometry(s,s,s),bm(cols[Math.floor(Math.random()*cols.length)],.5));
+      p.position.set((Math.random()-.5)*4.5,.5+Math.random()*2.8,-2+(Math.random()-.5)*12);
+      p._vx=(Math.random()-.5)*.4;p._vy=(Math.random()-.5)*.18;p._ph=Math.random()*Math.PI*2;
+      p._life=3+Math.random()*4;p._ml=p._life;scene.add(p);moths.push(p);
+    }
+
+    /* state */
+    const G={pH:3,oH:3,pA:0,oA:0,pCr:0,beat:0};
+    let shk=0,bazR=false,vFall=false,vT=0,lT=0,done=false,seqI=seqOffset||0;
+    const BEATMS=1150;let tbS=Date.now(),oppAnim=null,oppAt=0,oppAd=0;
+
+    const SEQ=[
+      {b:1,p:'reload',o:'reload',pA:1,oA:1,pH:0,oH:0,n:''},
+      {b:2,p:'reload',o:'shoot',pA:1,oA:-1,pH:-1,oH:0,n:'ohit'},
+      {b:3,p:'reload',o:'reload',pA:1,oA:1,pH:0,oH:0,n:'bc1'},
+      {b:4,p:'shoot',o:'block',pA:-1,oA:0,pH:0,oH:0,n:'blk'},
+      {b:5,p:'reload',o:'reload',pA:1,oA:1,pH:0,oH:0,n:''},
+      {b:6,p:'reload',o:'reload',pA:1,oA:1,pH:0,oH:0,n:'bc2'},
+      {b:7,p:'shoot',o:'miss',pA:-1,oA:0,pH:0,oH:-2,n:'baz'},
+      {b:8,p:'block',o:'shoot',pA:0,oA:-1,pH:0,oH:0,n:'pblk'},
+      {b:9,p:'reload',o:'miss',pA:1,oA:0,pH:0,oH:0,n:'v1'},
+      {b:10,p:'reload',o:'miss',pA:1,oA:0,pH:0,oH:0,n:'v2'},
+      {b:11,p:'shoot',o:'miss',pA:-1,oA:0,pH:0,oH:0,n:'v3'},
+    ];
+
+    function applyBeat(s){
+      G.beat=s.b;
+      G.pA=Math.max(0,Math.min(3,G.pA+s.pA));G.oA=Math.max(0,Math.min(3,G.oA+s.oA));
+      G.pH=Math.max(0,G.pH+s.pH);G.oH=Math.max(0,G.oH+s.oH);
+      if(s.p==='reload') G.pCr++; else G.pCr=0;
+      bazR=G.pCr>=3;cwG.visible=!bazR;bzG.visible=bazR;
+      const op=new THREE.Vector3(0,1.8,-3.8);
+      if(s.n==='ohit'){oppAnim='shoot';oppAt=0;oppAd=.45;shk=.12;}
+      if(s.n==='baz'){
+        bazR=false;G.pCr=0;cwG.visible=true;bzG.visible=false;
+        spawnPts(op,0xff6600,22);spawnPts(op,0xffaa00,12);spawnSW(op);shk=.38;
+        oppAnim='hit';oppAt=0;oppAd=.75;
+      }
+      if(s.n==='blk'||s.n==='pblk'){oppAnim='shoot';oppAt=0;oppAd=.45;}
+      if(s.n==='v3'){vFall=true;vT=0;}
+    }
+
+    /* beat timer */
+    let bIv=setInterval(()=>{
+      if(!vFall&&!done&&seqI<SEQ.length) applyBeat(SEQ[seqI++]);
+    },BEATMS);
+    applyBeat(SEQ[seqI++]);
+
+    /* reset and loop */
+    function resetScene(){
+      G.pH=3;G.oH=3;G.pA=0;G.oA=0;G.pCr=0;G.beat=0;
+      shk=0;bazR=false;vFall=false;vT=0;lT=0;done=false;seqI=0;
+      platL.position.x=-1;platR.position.x=1;
+      opp.position.set(0,0,-3.8);opp.rotation.set(0,0,0);opp.scale.setScalar(1);
+      if(opp._tr)opp._tr.material.emissive=new THREE.Color(0);
+      if(opp._ag)opp._ag.rotation.set(0,0,0);
+      oppAnim=null;lavaL.intensity=0;
+      [...pts,...vE,...moths].forEach(p=>scene.remove(p));
+      pts.length=0;vE.length=0;moths.length=0;
+      cwG.visible=true;bzG.visible=false;
+      tbS=Date.now();
+      clearInterval(bIv);
+      applyBeat(SEQ[seqI++]);
+      bIv=setInterval(()=>{if(!vFall&&!done&&seqI<SEQ.length)applyBeat(SEQ[seqI++]);},BEATMS);
+    }
+
+    /* render loop */
+    const clk={t:0,last:0};
+    function loop(now=0){
+      requestAnimationFrame(loop);
+      const dt=Math.min((now-clk.last)/1000,.05);clk.last=now;clk.t+=dt;const t=clk.t;
+
+      /* resize check */
+      const cw=canvas.clientWidth,ch=canvas.clientHeight;
+      if(renderer.domElement.width!==cw||renderer.domElement.height!==ch){
+        renderer.setSize(cw,ch,false);camera.aspect=cw/ch;camera.updateProjectionMatrix();
+      }
+
+      /* opp idle */
+      if(!vFall&&!oppAnim){
+        opp.position.y=Math.sin(t*1.4)*.025;
+        if(opp._ag)opp._ag.rotation.z=Math.sin(t)*.04;
+        if(opp._ll)opp._ll.rotation.x=Math.sin(t)*.035;
+        if(opp._rl)opp._rl.rotation.x=-Math.sin(t)*.035;
+      }
+      /* opp anim */
+      if(oppAnim){
+        oppAt+=dt;const p2=oppAt/oppAd,s2=Math.sin(p2*Math.PI);
+        if(oppAnim==='hit'){opp.position.z=opp._bz+.4*s2;opp.rotation.z=-.14*Math.sin(p2*Math.PI*3.5);if(opp._tr)opp._tr.material.emissive=new THREE.Color(0xff2200).multiplyScalar(s2*.55);}
+        if(oppAnim==='shoot'){opp._ag.rotation.x=-.38*s2;opp.rotation.x=.1*s2;opp.position.z=opp._bz+.18*s2;}
+        if(oppAt>=oppAd){oppAnim=null;opp.position.z=opp._bz;opp.rotation.set(0,0,0);if(opp._ag)opp._ag.rotation.set(0,0,0);if(opp._tr)opp._tr.material.emissive=new THREE.Color(0);}
+      }
+      /* void fall */
+      if(vFall){
+        vT+=dt;
+        platL.position.x=Math.max(-3.6,-1-vT*7.5);
+        platR.position.x=Math.min(3.6,1+vT*7.5);
+        if(vT>.08){const ft=vT-.08;opp.position.y=-.5-ft*ft*13;opp.rotation.x+=dt*2.4;opp.rotation.z+=dt*1.2;opp.scale.setScalar(Math.max(.08,1-ft*.6));}
+        if(vT>.65){lT+=dt;lavaL.intensity=Math.min(1,lT*3)*4.5;eT+=dt;if(eT>.02){spawnEmber();spawnEmber();spawnEmber();eT=0;}}
+        if(vT>2.1&&!done){done=true;}
+        if(vT>3.8){resetScene();}
+      }
+      /* particles */
+      for(let i=pts.length-1;i>=0;i--){const p=pts[i];p._v.y-=14*dt;p.position.addScaledVector(p._v,dt);p._l-=dt;p.material.opacity=Math.max(0,p._l/p._ml);if(p._l<=0){scene.remove(p);pts.splice(i,1);}}
+      for(let i=vE.length-1;i>=0;i--){const e=vE[i];e.position.y+=e._vy*dt;e.position.x+=e._vx*dt;e._vy*=.97;e._life-=dt;e.material.opacity=Math.max(0,e._life/e._ml);if(e._life<=0){scene.remove(e);vE.splice(i,1);}}
+      mT+=dt;if(mT>.2){mT=0;spawnMoth();}
+      for(let i=moths.length-1;i>=0;i--){const m=moths[i];m.position.x+=m._vx*dt+Math.sin(t*2+m._ph)*.3*dt;m.position.y+=m._vy*dt+Math.sin(t*1.4+m._ph)*.15*dt;m._life-=dt;m.material.opacity=Math.max(0,(m._life/m._ml)*.5);if(m._life<=0){scene.remove(m);moths.splice(i,1);}}
+      /* camera weapon */
+      cwG.position.y=-.27+Math.sin(t*1.4)*.005;cwG.rotation.z=Math.sin(t*.9)*.008;
+      bzG.position.y=-.3+Math.sin(t*1.1)*.008;bzG.rotation.z=Math.sin(t*.7)*.012;
+      /* shake */
+      if(shk>0){camera.position.x=CB.x+(Math.random()-.5)*shk;camera.position.y=CB.y+(Math.random()-.5)*shk*.5;shk-=dt*5;if(shk<0){shk=0;camera.position.copy(CB);}}
+      camera.lookAt(CL);
+      renderer.render(scene,camera);
+    }
+    loop();
+  }
+
+  /* stagger start so three scenes don't all peak at same moment */
+  window.addEventListener('load',()=>{
+    initPreview('gpw1', 0);
+    setTimeout(()=>initPreview('gpw2', 3), 500);
+    setTimeout(()=>initPreview('gpw3', 6), 1000);
+  });
+})();
 </script>
 </body>
 </html>
