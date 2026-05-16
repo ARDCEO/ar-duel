@@ -556,47 +556,39 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   <div style="height:30px"></div>
 </div>
 
-<!-- MULTIPLAYER LOBBY -->
+<!-- MULTIPLAYER WAGER PICKER -->
 <div id="smp" class="screen">
   <div class="mp-h">MULTIPLAYER</div>
-  <div class="mp-s">REAL PvP — CHALLENGE A PLAYER</div>
-  <button class="btn prim" onclick="mpCreate()">CREATE ROOM</button>
-  <div class="mp-or">— OR —</div>
-  <input class="mp-input" id="mp-join-code" maxlength="4" placeholder="ENTER CODE" oninput="this.value=this.value.toUpperCase()">
-  <button class="btn" style="border-color:var(--cyan);color:var(--cyan)" onclick="mpJoin()">JOIN ROOM →</button>
+  <div class="mp-s">PICK A WAGER · GET MATCHED</div>
+  <div style="font-size:9px;letter-spacing:1px;color:var(--muted);text-align:center;max-width:280px;margin-bottom:6px">You'll be paired with another player betting the same amount. Winner takes all.</div>
+  <div class="wager-display" id="wager-amt">FREE MATCH</div>
+  <div class="wager-row">
+    <button class="wbtn sel" onclick="setWager(0)">FREE</button>
+    <button class="wbtn" onclick="setWager(25)">25 DC</button>
+    <button class="wbtn" onclick="setWager(50)">50 DC</button>
+    <button class="wbtn" onclick="setWager(100)">100 DC</button>
+    <button class="wbtn" onclick="setWager(250)">250 DC</button>
+    <button class="wbtn" onclick="setWager(500)">500 DC</button>
+    <button class="wbtn" onclick="setWager(1000)">1000 DC</button>
+  </div>
+  <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-align:center;max-width:240px;margin:6px 0 12px">10% platform rake on wagers above Free</div>
+  <button class="btn prim" onclick="mpQueueStart()">FIND MATCH →</button>
   <div id="mp-err" style="font-size:9px;color:var(--red);letter-spacing:2px;min-height:14px;margin-top:2px"></div>
   <button class="btn ghost" onclick="show('st')">← BACK</button>
 </div>
 
-<!-- WAGER SELECT — COMING SOON -->
-<div id="swager" class="screen">
-  <div style="font-size:9px;letter-spacing:4px;color:var(--amber);text-transform:uppercase;margin-bottom:8px">COMING SOON</div>
-  <div class="mp-h" style="color:var(--amber)">DC WAGER PvP</div>
-  <div class="mp-s">DUEL CREDITS SYSTEM LAUNCHING SOON</div>
-  <div style="background:var(--surface);border:.5px solid rgba(255,210,63,.2);border-radius:8px;padding:20px;max-width:280px;text-align:center;margin-bottom:16px">
-    <div style="font-size:28px;margin-bottom:10px">🪙</div>
-    <div style="font-size:10px;color:var(--txt);line-height:1.9;letter-spacing:1px">
-      <b style="color:var(--amber)">Duel Credits (DC)</b> are AR Duel's in-game currency.<br>
-      Buy DC with <b style="color:var(--txt)">USD via card</b> or <b style="color:var(--txt)">Solana wallet</b>.<br>
-      Wager DC on real PvP matches — winner takes all.<br>
-      Minimum wager entry: <b style="color:var(--amber)">500 DC</b>.
-    </div>
-    <div style="margin-top:14px;padding-top:14px;border-top:.5px solid var(--border)">
-      <div style="font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:6px">EARN FREE DC</div>
-      <div style="font-size:9px;color:var(--muted);line-height:1.8">Daily login rewards · Season Pass · Founder Pack</div>
-    </div>
-  </div>
-  <button class="btn prim" onclick="mpConfirmWager()">PLAY FREE MATCH →</button>
-  <button class="btn ghost" onclick="show('smp')">← BACK</button>
-</div>
-
-<!-- WAITING FOR OPPONENT -->
+<!-- QUEUE / SEARCHING -->
 <div id="swaiting" class="screen">
   <div class="wait-ring"></div>
-  <div class="wait-status" id="wait-status">WAITING FOR OPPONENT</div>
-  <div class="wait-code" id="wait-code"></div>
-  <div style="font-size:8px;color:var(--muted);letter-spacing:2px;text-align:center;margin-top:4px" id="wait-sub">Share this code with your opponent</div>
-  <button class="btn ghost" style="margin-top:18px" onclick="mpCancel()">CANCEL</button>
+  <div class="wait-status" id="wait-status">SEARCHING FOR OPPONENT</div>
+  <div id="wait-timer" style="font-family:var(--disp);font-size:42px;color:var(--cyan);letter-spacing:2px;margin:8px 0">0s</div>
+  <div id="wait-stage" style="font-size:9px;color:var(--muted);letter-spacing:2px;text-align:center;max-width:280px;line-height:1.7">Matching with a player at your wager...</div>
+  <div id="wait-ai-prompt" style="display:none;margin-top:16px;max-width:280px;text-align:center">
+    <div style="font-size:9px;color:var(--amber);letter-spacing:1px;margin-bottom:10px">No live opponents found right now.</div>
+    <button class="btn prim" onclick="mpQueueToAI()" style="margin-bottom:8px">PLAY VS AI INSTEAD</button>
+    <div style="font-size:8px;color:var(--muted);letter-spacing:1px">Or keep searching — someone will join soon.</div>
+  </div>
+  <button class="btn ghost" style="margin-top:18px" onclick="mpQueueCancel()">CANCEL SEARCH</button>
 </div>
 
 <!-- RESULT -->
@@ -719,79 +711,302 @@ function sbSubscribe(code, onUpdate){
   return ws;
 }
 
-// ── ROOM CODE GENERATOR ──
-function genCode(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
-}
+// ══════════════════════════════════════════════
+// MATCHMAKING QUEUE SYSTEM (replaces room-code lobby)
+// ══════════════════════════════════════════════
+// FLOW:
+//   1) Player picks wager → mpQueueStart() inserts row in mp_queue table
+//   2) Poll for matches every 1.5s:
+//      - Stage 1 (0-15s): only match same wager
+//      - Stage 2 (15-30s): match ±50% wager range
+//      - Stage 3 (30-45s): match any wager → show "Play vs AI?" prompt
+//      - 45s+: keep searching until cancel
+//   3) When two queue entries match:
+//      - Earlier-queued player becomes p1, claims both rows atomically,
+//        creates room with both player IDs, deletes queue rows.
+//      - Both clients detect: "I'm not in queue but a room exists with my id" → start match
 
-// ── WAGER SELECTION ──
+let mpQueueRow=null;     // our row in mp_queue
+let mpQueueTimer=null;   // poll interval
+let mpQueueStartTime=0;  // when we started searching
+let mpQueueStage=1;      // 1=exact, 2=fuzzy, 3=any
+let mpQueueTimerDisplay=null; // UI timer interval
+
+// ── WAGER SELECTION (used by buttons in #smp) ──
 function setWager(amt){
   mpWager=amt;
-  document.getElementById('wager-amt').textContent=amt===0?'FREE MATCH':amt+' DC';
-  document.querySelectorAll('.wbtn').forEach(b=>b.classList.toggle('sel',parseInt(b.textContent)===amt||(amt===0&&b.textContent==='FREE')));
-}
-
-// ── CREATE ROOM ──
-async function mpCreate(){
-  mpWager=0;
-  show('swager');
-}
-
-async function mpConfirmWager(){
-  const code=genCode();
-  const room=await sbInsert({
-    code,host_id:playerId,status:'waiting',
-    map:cMap,wager:mpWager,
-    host_hp:3,guest_hp:3,
-    host_ammo:0,guest_ammo:0,
-    host_action:null,guest_action:null,
-    host_cr:0,guest_cr:0,host_vm:0,guest_vm:0,
-    beat:0,winner:null
+  const disp=document.getElementById('wager-amt');
+  if(disp) disp.textContent = amt===0 ? 'FREE MATCH' : amt+' DC';
+  document.querySelectorAll('.wbtn').forEach(b=>{
+    const txt=b.textContent.trim();
+    const matchesFree = amt===0 && txt==='FREE';
+    const matchesAmt  = amt>0 && parseInt(txt)===amt;
+    b.classList.toggle('sel', matchesFree || matchesAmt);
   });
-  if(!room){document.getElementById('mp-err').textContent='CONNECTION ERROR';return}
-  mpRoom=room;mpRole='host';
-  document.getElementById('wait-code').textContent=code;
-  document.getElementById('wait-status').textContent='WAITING FOR OPPONENT';
-  document.getElementById('wait-sub').textContent='Share this code with your opponent';
-  show('swaiting');
-  // Subscribe — host starts match when guest joins
-  mpChannel=sbSubscribe(code,(updated)=>{
-    if(updated.status==='playing'&&mpRole==='host'){
-      mpRoom=updated;
-      mpStartMatch();
+}
+
+// ── ENTER MATCHMAKING QUEUE ──
+async function mpQueueStart(){
+  // Validate DC balance if wager > 0
+  if(mpWager > 0){
+    const bal = dcBalance();
+    if(bal < mpWager){
+      document.getElementById('mp-err').textContent = `INSUFFICIENT DC · BALANCE: ${bal}`;
+      return;
     }
+  }
+  document.getElementById('mp-err').textContent = '';
+
+  // Fire-and-forget stale cleanup (ghost queue entries from dropped sessions)
+  fetch(`${SB_URL}/rest/v1/rpc/cleanup_stale_queue`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: '{}'
+  }).catch(()=>{});
+
+  // Reset state
+  mpQueueStage = 1;
+  mpQueueStartTime = Date.now();
+
+  // Insert ourselves into the queue
+  const queueRow = await sbQueueInsert({
+    player_id: playerId,
+    wager: mpWager,
+    rank: gWins
   });
-}
 
-// ── JOIN ROOM ──
-async function mpJoin(){
-  const code=document.getElementById('mp-join-code').value.trim();
-  if(code.length!==4){document.getElementById('mp-err').textContent='ENTER A 4-DIGIT CODE';return}
-  document.getElementById('mp-err').textContent='';
-  const room=await sbGet(code);
-  if(!room){document.getElementById('mp-err').textContent='ROOM NOT FOUND';return}
-  if(room.status!=='waiting'){document.getElementById('mp-err').textContent='ROOM ALREADY STARTED';return}
-  if(room.host_id===playerId){document.getElementById('mp-err').textContent='CANNOT JOIN OWN ROOM';return}
-  mpRoom=room;mpRole='guest';mpWager=room.wager;
-  // Update room to playing
-  await sbUpdate(code,{guest_id:playerId,status:'playing'});
-  mpRoom={...mpRoom,guest_id:playerId,status:'playing'};
-  document.getElementById('wait-code').textContent=code;
-  document.getElementById('wait-status').textContent='CONNECTED!';
-  document.getElementById('wait-sub').textContent='Connected! Starting match...';
+  if(!queueRow){
+    document.getElementById('mp-err').textContent = 'CONNECTION ERROR · TRY AGAIN';
+    return;
+  }
+  mpQueueRow = queueRow;
+
+  // Switch to searching screen
   show('swaiting');
-  // Subscribe for updates
-  mpChannel=sbSubscribe(code,(updated)=>{mpRoom=updated;mpOnUpdate(updated)});
-  setTimeout(()=>mpStartMatch(),800);
+  updateQueueUI();
+
+  // Start polling for a match
+  mpQueueTimer = setInterval(mpQueueTick, 1500);
+  // Start UI timer
+  mpQueueTimerDisplay = setInterval(()=>{
+    const sec = Math.floor((Date.now() - mpQueueStartTime) / 1000);
+    const t = document.getElementById('wait-timer');
+    if(t) t.textContent = sec + 's';
+  }, 250);
+
+  // Fire one immediate tick (in case someone is already waiting)
+  setTimeout(mpQueueTick, 250);
 }
 
-// ── CANCEL ──
-async function mpCancel(){
-  if(mpRoom){await sbDelete(mpRoom.code)}
-  if(mpChannel){try{mpChannel.close()}catch(e){}}
-  mpRoom=null;mpRole=null;mpChannel=null;
+// ── POLL FOR MATCH ──
+async function mpQueueTick(){
+  if(!mpQueueRow) return;
+
+  const elapsed = (Date.now() - mpQueueStartTime) / 1000;
+
+  // Stage transitions
+  if(elapsed >= 30 && mpQueueStage < 3){
+    mpQueueStage = 3;
+    updateQueueUI();
+  } else if(elapsed >= 15 && mpQueueStage < 2){
+    mpQueueStage = 2;
+    updateQueueUI();
+  }
+
+  // First — check if someone already matched US (created a room with our id)
+  const existingRoom = await sbCheckRoomForPlayer(playerId);
+  if(existingRoom){
+    clearInterval(mpQueueTimer);
+    clearInterval(mpQueueTimerDisplay);
+    mpRoom = existingRoom;
+    mpRole = (existingRoom.host_id === playerId) ? 'host' : 'guest';
+    mpQueueRow = null;
+    setTimeout(()=> mpStartMatch(), 500);
+    return;
+  }
+
+  // Otherwise — scan queue for a suitable opponent
+  const opponents = await sbQueueFind(mpWager, mpQueueStage);
+  // Filter out ourselves
+  const candidates = (opponents || []).filter(o => o.player_id !== playerId);
+  if(candidates.length === 0) return;
+
+  // Pick the player who has been waiting longest
+  candidates.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+  const opp = candidates[0];
+
+  // Race condition guard: only the earlier-queued player creates the room
+  const myCreated = new Date(mpQueueRow.created_at);
+  const oppCreated = new Date(opp.created_at);
+
+  if(myCreated > oppCreated){
+    // They will create the room — we wait for it
+    return;
+  }
+
+  // We are the older entry — atomically create the room
+  await mpQueueClaim(opp);
+}
+
+// ── CLAIM A MATCH (create room + delete both queue rows) ──
+async function mpQueueClaim(opp){
+  // Use the higher of the two wagers (in case stage 2 or 3 paired mismatched)
+  const matchWager = Math.max(mpWager, opp.wager);
+
+  const code = 'M' + Math.random().toString(36).slice(2,8).toUpperCase();
+  const room = await sbInsert({
+    code,
+    host_id: playerId,
+    guest_id: opp.player_id,
+    status: 'playing',
+    map: 'hallway',
+    wager: matchWager,
+    host_hp:3, guest_hp:3,
+    host_ammo:0, guest_ammo:0,
+    host_action:null, guest_action:null,
+    host_cr:0, guest_cr:0, host_vm:0, guest_vm:0,
+    beat:0, winner:null
+  });
+
+  if(!room){
+    // Another match got there first; resume polling
+    return;
+  }
+
+  // Delete both queue rows so others stop finding them
+  await sbQueueDelete(mpQueueRow.id);
+  await sbQueueDelete(opp.id);
+
+  // Stop polling
+  clearInterval(mpQueueTimer);
+  clearInterval(mpQueueTimerDisplay);
+
+  // Subscribe to room updates
+  mpChannel = sbSubscribe(code, (updated)=>{
+    mpRoom = updated;
+    mpOnUpdate(updated);
+  });
+
+  mpRoom = room;
+  mpRole = 'host';
+  mpQueueRow = null;
+  mpWager = matchWager;  // ensure displayed wager reflects matched amount
+
+  setTimeout(()=> mpStartMatch(), 500);
+}
+
+// ── UI: update text based on current stage ──
+function updateQueueUI(){
+  const status = document.getElementById('wait-status');
+  const stage  = document.getElementById('wait-stage');
+  const ai     = document.getElementById('wait-ai-prompt');
+
+  if(mpQueueStage === 1){
+    if(status) status.textContent = 'SEARCHING FOR OPPONENT';
+    if(stage) stage.innerHTML = `Matching with a player at <b style="color:var(--amber)">${mpWager===0?'FREE':mpWager+' DC'}</b> wager...`;
+    if(ai) ai.style.display = 'none';
+  } else if(mpQueueStage === 2){
+    if(status) status.textContent = 'EXPANDING SEARCH';
+    if(stage) stage.innerHTML = `No exact match yet — looking for players at <b style="color:var(--amber)">${mpWager===0?'any wager':Math.floor(mpWager*0.5)+'–'+Math.ceil(mpWager*1.5)+' DC'}</b>...`;
+    if(ai) ai.style.display = 'none';
+  } else {
+    if(status) status.textContent = 'STILL SEARCHING';
+    if(stage) stage.innerHTML = `Open search — any player, any wager. Network is quiet right now.`;
+    if(ai) ai.style.display = 'block';
+  }
+}
+
+// ── PLAY VS AI INSTEAD ──
+async function mpQueueToAI(){
+  await mpQueueCancel();
+  curMode = '2d';  // classic AI mode
+  startCD();
+}
+
+// ── CANCEL SEARCH ──
+async function mpQueueCancel(){
+  if(mpQueueRow){
+    try { await sbQueueDelete(mpQueueRow.id); } catch(e){}
+  }
+  if(mpQueueTimer) clearInterval(mpQueueTimer);
+  if(mpQueueTimerDisplay) clearInterval(mpQueueTimerDisplay);
+  mpQueueRow = null;
+  mpQueueTimer = null;
+  mpQueueTimerDisplay = null;
   show('smp');
+}
+
+// ── LEGACY CANCEL (called from mid-match leave) ──
+async function mpCancel(){
+  if(mpRoom){
+    try { await sbDelete(mpRoom.code); } catch(e){}
+  }
+  if(mpChannel){ try { mpChannel.close(); } catch(e){} }
+  mpRoom = null;
+  mpRole = null;
+  mpChannel = null;
+  mpQueueCancel();
+}
+
+// ── QUEUE DB HELPERS ──
+async function sbQueueInsert(data){
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/mp_queue`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+    const d = await r.json();
+    return d[0] || null;
+  } catch(e){ return null; }
+}
+
+async function sbQueueFind(wager, stage){
+  try {
+    let filter;
+    if(stage === 1){
+      filter = `wager=eq.${wager}`;
+    } else if(stage === 2){
+      const lo = Math.floor(wager * 0.5);
+      const hi = Math.ceil(wager * 1.5);
+      filter = `wager=gte.${lo}&wager=lte.${hi}`;
+    } else {
+      filter = ''; // no filter — any wager
+    }
+    const url = `${SB_URL}/rest/v1/mp_queue?select=*${filter ? '&' + filter : ''}&order=created_at.asc&limit=10`;
+    const r = await fetch(url, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    return await r.json();
+  } catch(e){ return []; }
+}
+
+async function sbQueueDelete(id){
+  try {
+    await fetch(`${SB_URL}/rest/v1/mp_queue?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+  } catch(e){}
+}
+
+async function sbCheckRoomForPlayer(pid){
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rooms?or=(host_id.eq.${pid},guest_id.eq.${pid})&status=eq.playing&select=*&limit=1`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    const d = await r.json();
+    return d[0] || null;
+  } catch(e){ return null; }
 }
 
 // ── START MULTIPLAYER MATCH ──
@@ -1162,7 +1377,7 @@ function renderTitle(){
       <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
     </div>
     <div style="height:6px"></div>
-    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">🔒 MULTIPLAYER PvP</button>
+    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">⚡ MULTIPLAYER PvP</button>
     <div style="height:4px"></div>`;
   applyRingSkin(COSMETICS.ringSkin);
 }
@@ -2244,7 +2459,7 @@ function selMap(m){cMap=m;document.querySelectorAll('.mcard').forEach(c=>c.class
 function startGame(mode){
   au();curMode=mode;
   if(mode==='3d') show('sm');
-  else if(mode==='mp') showMPComingSoon();
+  else if(mode==='mp') show('smp');
   else startCD();
 }
 
@@ -2327,7 +2542,7 @@ function _startMatch(){
 
 function goPlay(){
   if(curMode==='3d') show('sm');
-  else if(curMode==='mp') showMPComingSoon();
+  else if(curMode==='mp') show('smp');
   else startCD();
 }
 function backToMenu(){
@@ -2814,13 +3029,38 @@ try {
       <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
     </div>
     <div style="height:6px"></div>
-    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">🔒 MULTIPLAYER PvP</button>`;
+    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">⚡ MULTIPLAYER PvP</button>`;
 }
 
 // Show how to play on very first visit
 if(!localStorage.getItem('arduel_played')){
   setTimeout(()=>{localStorage.setItem('arduel_played','1');howTo();},600);
 }
+
+// ── CLEANUP ON TAB CLOSE ──
+// If player closes browser while in queue or mid-match, remove their ghost entries
+window.addEventListener('beforeunload', () => {
+  try {
+    if(mpQueueRow){
+      // Synchronous-ish cleanup via sendBeacon (allowed during unload)
+      const url = `${SB_URL}/rest/v1/mp_queue?id=eq.${mpQueueRow.id}`;
+      navigator.sendBeacon(url, new Blob([], { type: 'application/json' }));
+      // Fallback: fire-and-forget DELETE
+      fetch(url, {
+        method: 'DELETE',
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+        keepalive: true
+      });
+    }
+    if(mpRoom){
+      fetch(`${SB_URL}/rest/v1/rooms?code=eq.${mpRoom.code}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+        keepalive: true
+      });
+    }
+  } catch(e){}
+});
 </script>
 </body>
 </html>
