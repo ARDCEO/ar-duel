@@ -2796,6 +2796,27 @@ function showMasteryQuote(wins, won, tied, wager){
   // Fade in after result title has settled
   setTimeout(() => el.classList.add('show'), 1400);
 }
+
+// ══════════════════════════════════════════════
+// BOOT — this is what was missing
+// ══════════════════════════════════════════════
+try {
+  renderTitle();          // populates #play-btns with CLASSIC / ARENA / 🔒 MULTIPLAYER buttons
+  show('st');             // ensures title screen is the visible one
+} catch(err) {
+  console.error('[arduel] boot error:', err);
+  // Fallback — render plain text buttons so player always has a path forward
+  const c = document.getElementById('play-btns');
+  if(c) c.innerHTML = `
+    <div class="mode-lbl">SELECT MODE</div>
+    <div class="mode-row">
+      <button class="btn prim" style="flex:1;margin-bottom:0" onclick="startGame('2d')">CLASSIC</button>
+      <button class="btn d3"   style="flex:1;margin-bottom:0" onclick="startGame('3d')">ARENA MODE</button>
+    </div>
+    <div style="height:6px"></div>
+    <button class="btn" style="border-color:var(--cyan);color:var(--cyan);max-width:260px;width:100%" onclick="startGame('mp')">🔒 MULTIPLAYER PvP</button>`;
+}
+
 // Show how to play on very first visit
 if(!localStorage.getItem('arduel_played')){
   setTimeout(()=>{localStorage.setItem('arduel_played','1');howTo();},600);
